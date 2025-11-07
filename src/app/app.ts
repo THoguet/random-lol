@@ -1,12 +1,18 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { ChampionRandomizerComponent } from './champion-randomizer.component';
+import { ImagePreloadService } from './image-preload.service';
 
 @Component({
-  selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+	selector: 'app-root',
+	imports: [MatToolbarModule, MatIconModule, MatCardModule, ChampionRandomizerComponent],
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	templateUrl: './app.html',
+	styleUrls: ['./app.css'],
 })
 export class App {
-  protected readonly title = signal('random-lol');
+	// Initialize the image preload service
+	private readonly imagePreload = inject(ImagePreloadService);
 }

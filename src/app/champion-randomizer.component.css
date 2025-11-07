@@ -1,0 +1,141 @@
+:host {
+	display: block;
+}
+
+.randomizer {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1rem;
+}
+
+.status {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.status button {
+	padding: 0 0.25rem;
+	min-width: auto;
+}
+
+.status.error {
+	gap: 0.5rem;
+}
+
+.status.error button {
+	margin-left: 0.25rem;
+}
+
+.roll-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-weight: 600;
+}
+
+.roll-button mat-icon {
+	font-size: 1.25rem;
+}
+
+.hint {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.hint mat-icon {
+	font-size: 1.125rem;
+}
+
+.lane-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.lane-card {
+	flex: 1 1;
+	width: 300px;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--mat-sys-surface-container-high);
+}
+
+.lane-card mat-card-content {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.mat-mdc-card-content {
+	height: 100%;
+}
+
+.champion-details {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.champion-icon {
+	border-radius: 0.5rem;
+	box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.loading-image {
+	opacity: 0.65;
+}
+
+.champion-name {
+	margin: 0;
+}
+
+.champion-name-empty {
+	color: #9ca3af;
+	font-style: italic;
+}
+
+.roles-set {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	justify-content: flex-start;
+	height: 100%;
+	align-content: center;
+}
+
+.roles-set mat-chip {
+	font-weight: 500;
+}
+
+.champion-roles {
+	margin: 0;
+}
+
+.warning-card mat-card-content {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.warning-card mat-icon {
+	font-size: 1.25rem;
+}
+
+.change-champion-button {
+	margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.roll-button {
+		transition: none;
+	}
+}

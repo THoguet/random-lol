@@ -1,0 +1,100 @@
+<section class="randomizer" aria-live="polite">
+	<header class="controls">
+		<button
+			type="button"
+			mat-raised-button
+			color="primary"
+			class="roll-button"
+			[disabled]="isLoading() || !hasChampions()"
+			(click)="rollAssignments()"
+		>
+			<mat-icon aria-hidden="true">casino</mat-icon>
+			<span>Roll Champions</span>
+		</button>
+		<div class="hint mat-body-small">
+			<mat-icon aria-hidden="true">info</mat-icon>
+			<span>Each roll keeps champions unique across every lane.</span>
+		</div>
+		@if (isLoading()) {
+		<div class="status mat-body-small" aria-live="polite">
+			<mat-icon aria-hidden="true">autorenew</mat-icon>
+			<span>Loading champion data&hellip;</span>
+		</div>
+		} @else if (loadError(); as errorMessage) {
+		<div class="status error mat-body-small" aria-live="polite">
+			<mat-icon aria-hidden="true" color="warn">error</mat-icon>
+			<span>{{ errorMessage }}</span>
+			<button type="button" mat-button color="accent" (click)="retryLoad()">
+				<mat-icon aria-hidden="true">refresh</mat-icon>
+				<span>Retry</span>
+			</button>
+		</div>
+		}
+	</header>
+	<div class="lane-grid">
+		@for (assignment of laneAssignments(); track assignment.lane) {
+		<mat-card class="lane-card">
+			<mat-card-header>
+				<mat-card-title>{{ laneLabel(assignment.lane) }}</mat-card-title>
+				<mat-card-subtitle>
+					{{
+						assignment.champion
+							? 'Unique pick locked in'
+							: 'Champion needed for this lane'
+					}}
+				</mat-card-subtitle>
+			</mat-card-header>
+			<mat-card-content>
+				@if (assignment.champion; as champion) {
+				<div class="champion-details">
+					<img
+						[ngSrc]="champion.icon"
+						width="96"
+						height="96"
+						[class.loading-image]="isLoading()"
+						[alt]="champion.name + ' portrait'"
+						[priority]="true"
+						class="champion-icon"
+					/>
+					<p class="champion-name mat-title-medium">{{ champion.name }}</p>
+				</div>
+				<mat-chip-set class="roles-set" [attr.aria-label]="'Roles for ' + champion.name">
+					@for (role of champion.roles; track role) {
+					<mat-chip>{{ roleLabel(role) }}</mat-chip>
+					}
+				</mat-chip-set>
+				} @else {
+				<p class="champion-name champion-name-empty mat-title-medium">
+					No champion available
+				</p>
+				<p class="champion-roles mat-body-small">
+					Roll again once champions finish loading.
+				</p>
+				}
+				<button
+					type="button"
+					matFab
+					extended
+					color="accent"
+					class="change-champion-button"
+					[disabled]="isLoading() || !hasChampions()"
+					(click)="changeChampion(assignment.lane)"
+				>
+					<mat-icon aria-hidden="true">refresh</mat-icon>
+					Re-Roll ?
+				</button>
+			</mat-card-content>
+		</mat-card>
+		}
+	</div>
+	@if (hasMissingChampion()) {
+	<mat-card class="warning-card">
+		<mat-card-content>
+			<mat-icon aria-hidden="true" color="warn">warning</mat-icon>
+			<span>
+				Unable to assign a unique champion to every lane. Add more champions to the pool.
+			</span>
+		</mat-card-content>
+	</mat-card>
+	}
+</section>
