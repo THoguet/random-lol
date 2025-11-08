@@ -59,6 +59,7 @@ export class ChampionRandomizerComponent {
 
 	protected readonly reRollBank = signal<number>(MAX_ROLL);
 	protected readonly reRollBankMax = signal<number>(MAX_ROLL);
+	protected readonly showAndy = signal<boolean>(false);
 
 	protected readonly hasChampions = computed(() => this.champions().length > 0);
 
@@ -165,6 +166,12 @@ export class ChampionRandomizerComponent {
 			window.addEventListener('keyup', (event) => {
 				if (event.key === 'Shift') {
 					this.isShiftPressed.set(false);
+				}
+			});
+
+			window.addEventListener('keydown', (event) => {
+				if (event.key.toLowerCase() === 'm' && event.ctrlKey && event.altKey) {
+					this.showAndy.update((current) => !current);
 				}
 			});
 		}
