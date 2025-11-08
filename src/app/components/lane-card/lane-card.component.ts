@@ -17,13 +17,12 @@ export class LaneCardComponent {
 	lane = input.required<Lane>();
 	laneLabel = input.required<string>();
 	champion = input<Champion | null>(null);
-	canReRoll = input<number | undefined>(undefined);
+	canReRoll = input<boolean>(false);
 	isLoading = input<boolean>(false);
 	hasChampions = input<boolean>(false);
 	isShiftPressed = input<boolean>(false);
 	disabled = input<boolean>(false);
 
-	tryReroll = output<Lane>();
 	changeChampion = output<{ lane: Lane; forceReroll: boolean }>();
 	toggleDisableLane = output<Lane>();
 
@@ -36,10 +35,6 @@ export class LaneCardComponent {
 			support: 'Support',
 		};
 		return laneTitleMap[role];
-	}
-
-	onTryReroll(): void {
-		this.tryReroll.emit(this.lane());
 	}
 
 	onChangeChampion(forceReroll = false): void {

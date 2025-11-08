@@ -146,6 +146,12 @@ export class ImagePreloadService {
 			const cache = await this.cachePromise;
 			if (!cache) return;
 
+			// Check again if the entry exists to avoid race conditions
+			const existingResponse = await cache.match(url);
+			if (existingResponse) {
+				return; // Already cached, skip
+			}
+
 			// Create a new response with cache metadata
 			const blob = await response.blob();
 			const cachedResponse = new Response(blob, {
@@ -159,6 +165,10 @@ export class ImagePreloadService {
 
 			await cache.put(url, cachedResponse);
 		} catch (error) {
+			// Ignore "already exists" errors (race condition)
+			if (error instanceof DOMException && error.name === 'InvalidAccessError') {
+				return;
+			}
 			console.warn('Failed to cache image:', error);
 		}
 	}

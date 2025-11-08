@@ -64,20 +64,7 @@
 		} @else {
 		<p class="champion-name champion-name-empty mat-title-medium">No champion available</p>
 		<p class="champion-roles mat-body-small">Roll again once champions finish loading.</p>
-		} @if (canReRoll() === undefined) {
-		<button
-			type="button"
-			matFab
-			extended
-			color="accent"
-			class="change-champion-button"
-			[disabled]="isLoading() || !hasChampions()"
-			(click)="onTryReroll()"
-		>
-			<mat-icon aria-hidden="true">casino</mat-icon>
-			Try to Re-Roll !
-		</button>
-		} @else if (canReRoll()! > 0) {
+		} @if (canReRoll()) {
 		<button
 			type="button"
 			matFab

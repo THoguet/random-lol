@@ -4,6 +4,26 @@ import { Injectable } from '@angular/core';
 	providedIn: 'root',
 })
 export class RandomNumber {
+	/**
+	 * Generates a cryptographically secure random integer between 0 (inclusive) and max (exclusive).
+	 *
+	 * This method uses the Web Crypto API to generate unbiased random numbers by rejecting
+	 * values that would introduce bias due to the modulo operation. It repeatedly generates
+	 * random values until one falls within a range that evenly divides by max.
+	 *
+	 * @param max - The upper bound (exclusive) for the random number. Must be between 1 and Number.MAX_SAFE_INTEGER.
+	 * @returns A random integer in the range [0, max).
+	 * @throws {RangeError} If max is less than or equal to 0, or greater than Number.MAX_SAFE_INTEGER.
+	 *
+	 * @example
+	 * ```typescript
+	 * // Generate a random number between 0 and 9
+	 * const randomDigit = RandomNumber.getSecureRandomInt(10);
+	 *
+	 * // Generate a random index for an array
+	 * const randomIndex = RandomNumber.getSecureRandomInt(myArray.length);
+	 * ```
+	 */
 	public static getSecureRandomInt(max: number): number {
 		if (max <= 0 || max > Number.MAX_SAFE_INTEGER) {
 			throw new RangeError('max must be between 1 and Number.MAX_SAFE_INTEGER');

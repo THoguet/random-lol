@@ -21,6 +21,8 @@ interface LaneAssignmentView {
 	readonly rolesText: string;
 }
 
+const MAX_ROLL = 5;
+
 @Component({
 	selector: 'app-champion-randomizer',
 	imports: [
@@ -44,16 +46,6 @@ export class ChampionRandomizerComponent {
 		support: 'Support',
 	};
 
-	public canReRoll = signal<Map<Lane, number | undefined>>(
-		new Map([
-			['top', undefined],
-			['jungle', undefined],
-			['mid', undefined],
-			['adc', undefined],
-			['support', undefined],
-		])
-	);
-
 	public disabledLanes = signal<Set<Lane>>(new Set());
 
 	private previousChampionStamp = '';
@@ -64,6 +56,9 @@ export class ChampionRandomizerComponent {
 	protected readonly championsByLane = this.championData.championsByLane;
 	protected readonly isLoading = this.championData.loading;
 	protected readonly loadError = this.championData.error;
+
+	protected readonly reRollBank = signal<number>(MAX_ROLL);
+	protected readonly reRollBankMax = signal<number>(MAX_ROLL);
 
 	protected readonly hasChampions = computed(() => this.champions().length > 0);
 
@@ -175,44 +170,10 @@ export class ChampionRandomizerComponent {
 		}
 	}
 
-	// 1/2 chance to update canReRoll to true/false
-	protected tryReroll(lane: Lane): void {
-		const current = this.canReRoll().get(lane);
-		if (current === undefined) {
-			// check if this lane was disabled by checking assignments
-			const isDisabled = this.assignments().get(lane) === null;
-			if (isDisabled) {
-				// give free reroll if lane was disabled
-				this.changeChampion(lane, true);
-				this.canReRoll.update((state) => {
-					const newState = new Map(state);
-					newState.set(lane, undefined);
-					return newState;
-				});
-				return;
-			}
-
-			const newValue = RandomNumber.getSecureRandomInt(2) === 0 ? 1 : 0;
-			this.canReRoll.update((state) => {
-				const newState = new Map(state);
-				newState.set(lane, newValue);
-				return newState;
-			});
-		}
-	}
-
 	protected rollAssignments(): void {
 		const championsByLaneMap = this.notUsedChampions();
 
-		this.canReRoll.set(
-			new Map([
-				['top', undefined],
-				['jungle', undefined],
-				['mid', undefined],
-				['adc', undefined],
-				['support', undefined],
-			])
-		);
+		this.reRollBank.set(MAX_ROLL);
 
 		if (championsByLaneMap.size === 0) {
 			this.assignments.set(this.createEmptyAssignments());
@@ -232,7 +193,7 @@ export class ChampionRandomizerComponent {
 				continue;
 			}
 
-			const champion = candidates[RandomNumber.getSecureRandomInt(candidates.length + 1) - 1];
+			const champion = candidates[RandomNumber.getSecureRandomInt(candidates.length)];
 			result.set(lane, champion);
 			selected.add(champion.name);
 		}
@@ -264,27 +225,21 @@ export class ChampionRandomizerComponent {
 
 	public changeChampion(lane: Lane, forceReroll = false): void {
 		// Allow reroll if Shift is pressed or if canReRoll is true
-		const canReroll = this.canReRoll().get(lane);
-		if (!forceReroll && canReroll && canReroll < 1) {
+		if (!forceReroll && this.reRollBank() && this.reRollBank() < 1) {
 			return;
 		}
 
-		const newValue = canReroll && canReroll > 0 ? canReroll - 1 : 0;
-
-		this.canReRoll.update((current) => {
-			const newState = new Map(current);
-			newState.set(lane, newValue);
-			return newState;
-		});
+		this.reRollBank.set(this.reRollBank() - 1);
 		const notUsedChampionsForLane = this.notUsedChampions().get(lane);
 		if (!notUsedChampionsForLane) {
 			return;
 		}
 
-		const champion =
-			notUsedChampionsForLane[
-				RandomNumber.getSecureRandomInt(notUsedChampionsForLane.length + 1) - 1
-			];
+		const number = RandomNumber.getSecureRandomInt(notUsedChampionsForLane.length);
+
+		const champion = notUsedChampionsForLane[number];
+		console.log('Rerolled champion for lane', lane, 'to', champion);
+		console.log('Rerolled champion index:', number);
 		this.assignments.update((current) => {
 			const newState = new Map(current);
 			newState.set(lane, champion);
@@ -297,6 +252,7 @@ export class ChampionRandomizerComponent {
 			const newSet = new Set(current);
 			if (newSet.has(lane)) {
 				newSet.delete(lane);
+				this.reRollBank.set(this.reRollBank() + 1);
 			} else {
 				newSet.add(lane);
 			}
@@ -317,17 +273,13 @@ export class ChampionRandomizerComponent {
 				.map((assignment) => {
 					const laneLabel = this.laneLabel(assignment.lane);
 					const championName = assignment.champion?.name || 'No champion';
-					const rerollStatus = this.canReRoll().get(assignment.lane);
-					const rerollText =
-						rerollStatus === undefined
-							? 'reroll available'
-							: rerollStatus > 0
-							? 'reroll available'
-							: 'no reroll';
 
-					return `${laneLabel} - "${championName}" | ${rerollText}`;
+					return `${laneLabel} - "${championName}"`;
 				})
-				.join('\n');
+				.join('\n') +
+			'\n' +
+			this.reRollBank() +
+			' rerolls remaining';
 
 		if (typeof navigator !== 'undefined' && navigator.clipboard) {
 			try {

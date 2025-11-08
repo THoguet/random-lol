@@ -1,31 +1,39 @@
 <header class="controls">
-	<div class="button-group">
-		<button
-			type="button"
-			mat-raised-button
-			color="primary"
-			class="roll-button"
-			[disabled]="isLoading() || !hasChampions()"
-			(click)="onRoll()"
-		>
-			<mat-icon aria-hidden="true">casino</mat-icon>
-			<span>Roll Champions</span>
-		</button>
-		<button
-			type="button"
-			mat-raised-button
-			color="accent"
-			class="copy-button"
-			[disabled]="!canCopyDraft()"
-			(click)="onCopyDraft()"
-		>
-			<mat-icon aria-hidden="true">content_copy</mat-icon>
-			<span>Copy Draft</span>
-		</button>
+	<div class="left-controls">
+		<div class="button-group">
+			<button
+				type="button"
+				mat-raised-button
+				color="primary"
+				class="roll-button"
+				[disabled]="isLoading() || !hasChampions()"
+				(click)="onRoll()"
+			>
+				<mat-icon aria-hidden="true">casino</mat-icon>
+				<span>Roll Champions</span>
+			</button>
+			<button
+				type="button"
+				mat-raised-button
+				color="accent"
+				class="copy-button"
+				[disabled]="!canCopyDraft()"
+				(click)="onCopyDraft()"
+			>
+				<mat-icon aria-hidden="true">content_copy</mat-icon>
+				<span>Copy Draft</span>
+			</button>
+		</div>
+		<div class="hint mat-body-small">
+			<mat-icon aria-hidden="true" class="iconFlex">info</mat-icon>
+			<span style="height: 24px; display: flex; align-items: center">
+				Each roll keeps champions unique across every lane.
+			</span>
+		</div>
 	</div>
-	<div class="hint mat-body-small">
-		<mat-icon aria-hidden="true">info</mat-icon>
-		<span>Each roll keeps champions unique across every lane.</span>
+	<div style="position: relative">
+		<mat-progress-spinner class="" mode="determinate" [value]="rerollPercentage" />
+		<span class="centered-text">{{ rerollBank() }}</span>
 	</div>
 	@if (isLoading()) {
 	<div class="status mat-body-small" aria-live="polite">
