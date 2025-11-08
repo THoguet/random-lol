@@ -52,7 +52,7 @@ jobs:
                   cache-to: type=gha,mode=max
 
             - name: Run Trivy vulnerability scanner
-              uses: aquasecurity/trivy-action@0.27.0
+              uses: aquasecurity/trivy-action@0.33.1
               with:
                   image-ref: ghcr.io/thoguet/random-lol@${{ steps.build.outputs.digest }}
                   format: 'sarif'
