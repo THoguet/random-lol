@@ -44,6 +44,14 @@ export class ChampionRandomizerComponent {
 		support: 'Support',
 	};
 
+	public canReRoll = signal<Record<Lane, boolean | undefined>>({
+		top: undefined,
+		jungle: undefined,
+		mid: undefined,
+		adc: undefined,
+		support: undefined,
+	});
+
 	private previousChampionStamp = '';
 
 	protected readonly lanes = LANES;
@@ -55,7 +63,7 @@ export class ChampionRandomizerComponent {
 	protected readonly hasChampions = computed(() => this.champions().length > 0);
 
 	protected readonly assignments = signal<Record<Lane, Champion | null>>(
-		this.createEmptyAssignments(),
+		this.createEmptyAssignments()
 	);
 
 	protected readonly usedChampions = computed<Record<Lane, Champion | null>>(() => {
@@ -111,11 +119,11 @@ export class ChampionRandomizerComponent {
 				champion,
 				rolesText,
 			} satisfies LaneAssignmentView;
-		}),
+		})
 	);
 
 	protected readonly hasMissingChampion = computed(() =>
-		this.lanes.some((lane) => this.assignments()[lane] === null),
+		this.lanes.some((lane) => this.assignments()[lane] === null)
 	);
 
 	constructor() {
@@ -141,8 +149,28 @@ export class ChampionRandomizerComponent {
 		void this.championData.ensureLoaded();
 	}
 
+	// 1/2 chance to update canReRoll to true/false
+	protected tryReroll(lane: Lane): void {
+		const current = this.canReRoll()[lane];
+		if (current === undefined) {
+			const newValue = Math.random() < 0.5;
+			this.canReRoll.update((state) => ({
+				...state,
+				[lane]: newValue,
+			}));
+		}
+	}
+
 	protected rollAssignments(): void {
 		const championsByLaneMap = this.championsByLane();
+
+		this.canReRoll.set({
+			top: undefined,
+			jungle: undefined,
+			mid: undefined,
+			adc: undefined,
+			support: undefined,
+		});
 
 		if (championsByLaneMap.size === 0) {
 			this.assignments.set(this.createEmptyAssignments());
@@ -154,7 +182,7 @@ export class ChampionRandomizerComponent {
 
 		for (const lane of this.lanes) {
 			const candidates = (championsByLaneMap.get(lane) || []).filter(
-				(champion) => !selected.has(champion.name),
+				(champion) => !selected.has(champion.name)
 			);
 
 			if (candidates.length === 0) {
@@ -193,6 +221,10 @@ export class ChampionRandomizerComponent {
 	}
 
 	changeChampion(lane: Lane): void {
+		this.canReRoll.update((current) => ({
+			...current,
+			[lane]: false,
+		}));
 		const notUsedChampionsForLane = this.notUsedChampions()[lane];
 		if (!notUsedChampionsForLane) {
 			return;
