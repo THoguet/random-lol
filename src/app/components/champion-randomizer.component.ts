@@ -170,7 +170,7 @@ export class ChampionRandomizerComponent {
 			});
 
 			window.addEventListener('keydown', (event) => {
-				if (event.key.toLowerCase() === 'm' && event.ctrlKey && event.altKey) {
+				if (event.key.toLowerCase() === 'g' && event.ctrlKey && event.altKey) {
 					this.showAndy.update((current) => !current);
 				}
 			});
