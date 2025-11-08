@@ -58,6 +58,47 @@ export class ChampionRandomizerComponent {
 		this.createEmptyAssignments()
 	);
 
+	protected readonly usedChampions = computed<Record<Lane, Champion | null>>(() => {
+		const used: Record<Lane, Champion | null> = {
+			top: null,
+			jungle: null,
+			mid: null,
+			adc: null,
+			support: null,
+		};
+
+		for (const lane of this.lanes) {
+			const champion = this.assignments()[lane];
+			if (champion) {
+				used[lane] = champion;
+			}
+		}
+
+		return used;
+	});
+
+	protected readonly notUsedChampions = computed<Record<Lane, Champion[]>>(() => {
+		const notUsed: Record<Lane, Champion[]> = {
+			top: [],
+			jungle: [],
+			mid: [],
+			adc: [],
+			support: [],
+		};
+
+		for (const lane of this.lanes) {
+			const champion =
+				this.championsByLane()
+					.get(lane)
+					?.filter((champion) => {
+						return this.assignments()[lane] !== champion;
+					}) || [];
+			notUsed[lane] = champion;
+		}
+
+		return notUsed;
+	});
+
 	protected readonly laneAssignments = computed<LaneAssignmentView[]>(() =>
 		this.lanes.map((lane) => {
 			const champion = this.assignments()[lane];
@@ -151,7 +192,17 @@ export class ChampionRandomizerComponent {
 		} satisfies Record<Lane, Champion | null>;
 	}
 
-	changeChampion(arg0: string) {
-		throw new Error('Method not implemented.');
+	changeChampion(lane: Lane): void {
+		const notUsedChampionsForLane = this.notUsedChampions()[lane];
+		if (!notUsedChampionsForLane) {
+			return;
+		}
+
+		const champion =
+			notUsedChampionsForLane[Math.floor(Math.random() * notUsedChampionsForLane.length)];
+		this.assignments.update((current) => ({
+			...current,
+			[lane]: champion,
+		}));
 	}
 }
