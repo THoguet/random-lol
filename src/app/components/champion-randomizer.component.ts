@@ -13,6 +13,7 @@ import { LANES, Lane, Champion } from '../data/champions.data';
 import { ChampionDataService } from '../services/champion-data.service';
 import { LaneCardComponent } from './lane-card/lane-card.component';
 import { ControlHeaderComponent } from './control-header/control-header.component';
+import { RandomNumber } from '../services/random-number';
 
 interface LaneAssignmentView {
 	readonly lane: Lane;
@@ -43,13 +44,15 @@ export class ChampionRandomizerComponent {
 		support: 'Support',
 	};
 
-	public canReRoll = signal<Record<Lane, number | undefined>>({
-		top: undefined,
-		jungle: undefined,
-		mid: undefined,
-		adc: undefined,
-		support: undefined,
-	});
+	public canReRoll = signal<Map<Lane, number | undefined>>(
+		new Map([
+			['top', undefined],
+			['jungle', undefined],
+			['mid', undefined],
+			['adc', undefined],
+			['support', undefined],
+		])
+	);
 
 	public disabledLanes = signal<Set<Lane>>(new Set());
 
@@ -64,46 +67,52 @@ export class ChampionRandomizerComponent {
 
 	protected readonly hasChampions = computed(() => this.champions().length > 0);
 
-	protected readonly assignments = signal<Record<Lane, Champion | null>>(
+	protected readonly assignments = signal<Map<Lane, Champion | null>>(
 		this.createEmptyAssignments()
 	);
 
-	protected readonly usedChampions = computed<Record<Lane, Champion | null>>(() => {
-		const used: Record<Lane, Champion | null> = {
-			top: null,
-			jungle: null,
-			mid: null,
-			adc: null,
-			support: null,
-		};
+	protected readonly disabledLanesArray = computed(() => {
+		return Array.from(this.disabledLanes());
+	});
+
+	protected readonly activatedLanesArray = computed(() => {
+		return this.lanes.filter((lane) => !this.disabledLanes().has(lane));
+	});
+
+	protected readonly assignmentsArray = computed(() => {
+		const result: (Champion | null)[] = [];
+		for (const lane of this.lanes) {
+			result.push(this.assignments().get(lane) || null);
+		}
+		return result;
+	});
+
+	protected readonly usedChampions = computed<Map<Lane, Champion | null>>(() => {
+		const used = new Map<Lane, Champion | null>();
 
 		for (const lane of this.lanes) {
-			const champion = this.assignments()[lane];
-			if (champion) {
-				used[lane] = champion;
-			}
+			const champion = this.assignments().get(lane);
+			used.set(lane, champion || null);
 		}
 
 		return used;
 	});
 
-	protected readonly notUsedChampions = computed<Record<Lane, Champion[]>>(() => {
-		const notUsed: Record<Lane, Champion[]> = {
-			top: [],
-			jungle: [],
-			mid: [],
-			adc: [],
-			support: [],
-		};
+	protected readonly notUsedChampions = computed<Map<Lane, Champion[]>>(() => {
+		const notUsed = new Map<Lane, Champion[]>();
 
 		for (const lane of this.lanes) {
 			const champion =
 				this.championsByLane()
 					.get(lane)
-					?.filter((champion) => {
-						return this.assignments()[lane] !== champion;
-					}) || [];
-			notUsed[lane] = champion;
+					?.filter(
+						(champion) =>
+							!this.assignmentsArray().some(
+								(assignedChampion) =>
+									assignedChampion && assignedChampion.name === champion.name
+							)
+					) || [];
+			notUsed.set(lane, champion);
 		}
 
 		return notUsed;
@@ -111,9 +120,9 @@ export class ChampionRandomizerComponent {
 
 	protected readonly laneAssignments = computed<LaneAssignmentView[]>(() =>
 		this.lanes.map((lane) => {
-			const champion = this.assignments()[lane];
+			const champion = this.assignments().get(lane) || null;
 			const rolesText = champion
-				? champion.roles.map((role) => this.laneTitleMap[role]).join(', ')
+				? champion.roles.map((role: Lane) => this.laneTitleMap[role]).join(', ')
 				: '';
 
 			return {
@@ -168,38 +177,42 @@ export class ChampionRandomizerComponent {
 
 	// 1/2 chance to update canReRoll to true/false
 	protected tryReroll(lane: Lane): void {
-		const current = this.canReRoll()[lane];
+		const current = this.canReRoll().get(lane);
 		if (current === undefined) {
 			// check if this lane was disabled by checking assignments
-			const isDisabled = this.assignments()[lane] === null;
+			const isDisabled = this.assignments().get(lane) === null;
 			if (isDisabled) {
 				// give free reroll if lane was disabled
 				this.changeChampion(lane, true);
-				this.canReRoll.update((state) => ({
-					...state,
-					[lane]: undefined,
-				}));
+				this.canReRoll.update((state) => {
+					const newState = new Map(state);
+					newState.set(lane, undefined);
+					return newState;
+				});
 				return;
 			}
 
-			const newValue = Math.random() < 0.5 ? 1 : 0;
-			this.canReRoll.update((state) => ({
-				...state,
-				[lane]: newValue,
-			}));
+			const newValue = RandomNumber.getSecureRandomInt(2) === 0 ? 1 : 0;
+			this.canReRoll.update((state) => {
+				const newState = new Map(state);
+				newState.set(lane, newValue);
+				return newState;
+			});
 		}
 	}
 
 	protected rollAssignments(): void {
-		const championsByLaneMap = this.championsByLane();
+		const championsByLaneMap = this.notUsedChampions();
 
-		this.canReRoll.set({
-			top: undefined,
-			jungle: undefined,
-			mid: undefined,
-			adc: undefined,
-			support: undefined,
-		});
+		this.canReRoll.set(
+			new Map([
+				['top', undefined],
+				['jungle', undefined],
+				['mid', undefined],
+				['adc', undefined],
+				['support', undefined],
+			])
+		);
 
 		if (championsByLaneMap.size === 0) {
 			this.assignments.set(this.createEmptyAssignments());
@@ -209,18 +222,18 @@ export class ChampionRandomizerComponent {
 		const selected = new Set<string>();
 		const result = this.createEmptyAssignments();
 
-		for (const lane of this.lanes) {
+		for (const lane of this.activatedLanesArray()) {
 			const candidates = (championsByLaneMap.get(lane) || []).filter(
-				(champion) => !selected.has(champion.name)
+				(champion: Champion) => !selected.has(champion.name)
 			);
 
 			if (candidates.length === 0) {
-				result[lane] = null;
+				result.set(lane, null);
 				continue;
 			}
 
-			const champion = candidates[Math.floor(Math.random() * candidates.length)];
-			result[lane] = champion;
+			const champion = candidates[RandomNumber.getSecureRandomInt(candidates.length + 1) - 1];
+			result.set(lane, champion);
 			selected.add(champion.name);
 		}
 
@@ -239,40 +252,44 @@ export class ChampionRandomizerComponent {
 		return this.laneTitleMap[role];
 	}
 
-	private createEmptyAssignments(): Record<Lane, Champion | null> {
-		return {
-			top: null,
-			jungle: null,
-			mid: null,
-			adc: null,
-			support: null,
-		} satisfies Record<Lane, Champion | null>;
+	private createEmptyAssignments(): Map<Lane, Champion | null> {
+		return new Map([
+			['top', null],
+			['jungle', null],
+			['mid', null],
+			['adc', null],
+			['support', null],
+		]);
 	}
 
 	public changeChampion(lane: Lane, forceReroll = false): void {
 		// Allow reroll if Shift is pressed or if canReRoll is true
-		const canReroll = this.canReRoll()[lane];
+		const canReroll = this.canReRoll().get(lane);
 		if (!forceReroll && canReroll && canReroll < 1) {
 			return;
 		}
 
 		const newValue = canReroll && canReroll > 0 ? canReroll - 1 : 0;
 
-		this.canReRoll.update((current) => ({
-			...current,
-			[lane]: newValue,
-		}));
-		const notUsedChampionsForLane = this.notUsedChampions()[lane];
+		this.canReRoll.update((current) => {
+			const newState = new Map(current);
+			newState.set(lane, newValue);
+			return newState;
+		});
+		const notUsedChampionsForLane = this.notUsedChampions().get(lane);
 		if (!notUsedChampionsForLane) {
 			return;
 		}
 
 		const champion =
-			notUsedChampionsForLane[Math.floor(Math.random() * notUsedChampionsForLane.length)];
-		this.assignments.update((current) => ({
-			...current,
-			[lane]: champion,
-		}));
+			notUsedChampionsForLane[
+				RandomNumber.getSecureRandomInt(notUsedChampionsForLane.length + 1) - 1
+			];
+		this.assignments.update((current) => {
+			const newState = new Map(current);
+			newState.set(lane, champion);
+			return newState;
+		});
 	}
 
 	public toggleLane(lane: Lane): void {
@@ -285,29 +302,32 @@ export class ChampionRandomizerComponent {
 			}
 			return newSet;
 		});
-		this.assignments.update((current) => ({
-			...current,
-			[lane]: null,
-		}));
+		this.assignments.update((current) => {
+			const newState = new Map(current);
+			newState.set(lane, null);
+			return newState;
+		});
 	}
 
 	public async copyDraftToClipboard(): Promise<void> {
-		const draftText = this.laneAssignments()
-			.filter((assignment) => assignment.champion !== null)
-			.map((assignment) => {
-				const laneLabel = this.laneLabel(assignment.lane);
-				const championName = assignment.champion?.name || 'No champion';
-				const rerollStatus = this.canReRoll()[assignment.lane];
-				const rerollText =
-					rerollStatus === undefined
-						? 'reroll available'
-						: rerollStatus > 0
-						? 'reroll available'
-						: 'no reroll';
+		const draftText =
+			'‎\n' +
+			this.laneAssignments()
+				.filter((assignment) => assignment.champion !== null)
+				.map((assignment) => {
+					const laneLabel = this.laneLabel(assignment.lane);
+					const championName = assignment.champion?.name || 'No champion';
+					const rerollStatus = this.canReRoll().get(assignment.lane);
+					const rerollText =
+						rerollStatus === undefined
+							? 'reroll available'
+							: rerollStatus > 0
+							? 'reroll available'
+							: 'no reroll';
 
-				return `${laneLabel} - "${championName}" | ${rerollText}`;
-			})
-			.join('\n');
+					return `${laneLabel} - "${championName}" | ${rerollText}`;
+				})
+				.join('\n');
 
 		if (typeof navigator !== 'undefined' && navigator.clipboard) {
 			try {

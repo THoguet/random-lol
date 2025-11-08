@@ -14,7 +14,7 @@
 			[lane]="assignment.lane"
 			[laneLabel]="laneLabel(assignment.lane)"
 			[champion]="assignment.champion"
-			[canReRoll]="canReRoll()[assignment.lane]"
+			[canReRoll]="canReRoll().get(assignment.lane)"
 			[isLoading]="isLoading()"
 			[hasChampions]="hasChampions()"
 			[isShiftPressed]="isShiftPressed()"
