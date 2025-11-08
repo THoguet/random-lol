@@ -1,0 +1,67 @@
+:host {
+	display: block;
+}
+
+.controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1rem;
+}
+
+.button-group {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.status {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.status button {
+	padding: 0 0.25rem;
+	min-width: auto;
+}
+
+.status.error {
+	gap: 0.5rem;
+}
+
+.status.error button {
+	margin-left: 0.25rem;
+}
+
+.roll-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-weight: 600;
+}
+
+.roll-button mat-icon {
+	font-size: 1.25rem;
+}
+
+.copy-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-weight: 600;
+}
+
+.copy-button mat-icon {
+	font-size: 1.25rem;
+}
+
+.hint {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.hint mat-icon {
+	font-size: 1.125rem;
+}

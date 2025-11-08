@@ -6,13 +6,13 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-import { LANES, Lane, Champion } from './champions.data';
-import { ChampionDataService } from './champion-data.service';
+import { LANES, Lane, Champion } from '../data/champions.data';
+import { ChampionDataService } from '../services/champion-data.service';
+import { LaneCardComponent } from './lane-card/lane-card.component';
+import { ControlHeaderComponent } from './control-header/control-header.component';
 
 interface LaneAssignmentView {
 	readonly lane: Lane;
@@ -24,11 +24,10 @@ interface LaneAssignmentView {
 	selector: 'app-champion-randomizer',
 	imports: [
 		CommonModule,
-		NgOptimizedImage,
-		MatButtonModule,
 		MatCardModule,
-		MatChipsModule,
 		MatIconModule,
+		LaneCardComponent,
+		ControlHeaderComponent,
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './champion-randomizer.component.html',
@@ -44,7 +43,7 @@ export class ChampionRandomizerComponent {
 		support: 'Support',
 	};
 
-	public canReRoll = signal<Record<Lane, boolean | undefined>>({
+	public canReRoll = signal<Record<Lane, number | undefined>>({
 		top: undefined,
 		jungle: undefined,
 		mid: undefined,
@@ -52,7 +51,10 @@ export class ChampionRandomizerComponent {
 		support: undefined,
 	});
 
+	public disabledLanes = signal<Set<Lane>>(new Set());
+
 	private previousChampionStamp = '';
+	protected readonly isShiftPressed = signal<boolean>(false);
 
 	protected readonly lanes = LANES;
 	protected readonly champions = this.championData.champions;
@@ -122,9 +124,9 @@ export class ChampionRandomizerComponent {
 		})
 	);
 
-	protected readonly hasMissingChampion = computed(() =>
-		this.lanes.some((lane) => this.assignments()[lane] === null)
-	);
+	protected readonly canCopyDraft = computed<boolean>(() => {
+		return this.laneAssignments().some((assignment) => assignment.champion !== null);
+	});
 
 	constructor() {
 		effect(() => {
@@ -147,13 +149,40 @@ export class ChampionRandomizerComponent {
 		});
 
 		void this.championData.ensureLoaded();
+
+		// Track Shift key state
+		if (typeof window !== 'undefined') {
+			window.addEventListener('keydown', (event) => {
+				if (event.key === 'Shift') {
+					this.isShiftPressed.set(true);
+				}
+			});
+
+			window.addEventListener('keyup', (event) => {
+				if (event.key === 'Shift') {
+					this.isShiftPressed.set(false);
+				}
+			});
+		}
 	}
 
 	// 1/2 chance to update canReRoll to true/false
 	protected tryReroll(lane: Lane): void {
 		const current = this.canReRoll()[lane];
 		if (current === undefined) {
-			const newValue = Math.random() < 0.5;
+			// check if this lane was disabled by checking assignments
+			const isDisabled = this.assignments()[lane] === null;
+			if (isDisabled) {
+				// give free reroll if lane was disabled
+				this.changeChampion(lane, true);
+				this.canReRoll.update((state) => ({
+					...state,
+					[lane]: undefined,
+				}));
+				return;
+			}
+
+			const newValue = Math.random() < 0.5 ? 1 : 0;
 			this.canReRoll.update((state) => ({
 				...state,
 				[lane]: newValue,
@@ -220,10 +249,18 @@ export class ChampionRandomizerComponent {
 		} satisfies Record<Lane, Champion | null>;
 	}
 
-	changeChampion(lane: Lane): void {
+	public changeChampion(lane: Lane, forceReroll = false): void {
+		// Allow reroll if Shift is pressed or if canReRoll is true
+		const canReroll = this.canReRoll()[lane];
+		if (!forceReroll && canReroll && canReroll < 1) {
+			return;
+		}
+
+		const newValue = canReroll && canReroll > 0 ? canReroll - 1 : 0;
+
 		this.canReRoll.update((current) => ({
 			...current,
-			[lane]: false,
+			[lane]: newValue,
 		}));
 		const notUsedChampionsForLane = this.notUsedChampions()[lane];
 		if (!notUsedChampionsForLane) {
@@ -236,5 +273,48 @@ export class ChampionRandomizerComponent {
 			...current,
 			[lane]: champion,
 		}));
+	}
+
+	public toggleLane(lane: Lane): void {
+		this.disabledLanes.update((current) => {
+			const newSet = new Set(current);
+			if (newSet.has(lane)) {
+				newSet.delete(lane);
+			} else {
+				newSet.add(lane);
+			}
+			return newSet;
+		});
+		this.assignments.update((current) => ({
+			...current,
+			[lane]: null,
+		}));
+	}
+
+	public async copyDraftToClipboard(): Promise<void> {
+		const draftText = this.laneAssignments()
+			.filter((assignment) => assignment.champion !== null)
+			.map((assignment) => {
+				const laneLabel = this.laneLabel(assignment.lane);
+				const championName = assignment.champion?.name || 'No champion';
+				const rerollStatus = this.canReRoll()[assignment.lane];
+				const rerollText =
+					rerollStatus === undefined
+						? 'reroll available'
+						: rerollStatus > 0
+						? 'reroll available'
+						: 'no reroll';
+
+				return `${laneLabel} - "${championName}" | ${rerollText}`;
+			})
+			.join('\n');
+
+		if (typeof navigator !== 'undefined' && navigator.clipboard) {
+			try {
+				await navigator.clipboard.writeText(draftText);
+			} catch (error) {
+				console.error('Failed to copy draft to clipboard:', error);
+			}
+		}
 	}
 }

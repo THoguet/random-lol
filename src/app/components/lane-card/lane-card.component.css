@@ -1,0 +1,135 @@
+:host {
+	display: block;
+}
+
+.lane-card {
+	flex: 1 1;
+	width: 300px;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--mat-sys-surface-container-high);
+}
+
+.lane-card mat-card-content {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.mat-mdc-card-content {
+	height: 100%;
+}
+
+.champion-details {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.champion-icon {
+	border-radius: 0.5rem;
+	box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.loading-image {
+	opacity: 0.65;
+}
+
+.champion-name {
+	margin: 0;
+}
+
+.champion-name-empty {
+	color: #9ca3af;
+	font-style: italic;
+}
+
+.roles-set {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	justify-content: flex-start;
+	height: 80px;
+	align-content: center;
+}
+
+.roles-set mat-chip {
+	font-weight: 500;
+}
+
+.champion-roles {
+	margin: 0;
+}
+
+.change-champion-button {
+	margin-left: auto;
+}
+
+.change-champion-button.shift-active {
+	background-color: var(--mat-sys-tertiary);
+	color: var(--mat-sys-on-tertiary);
+	animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	50% {
+		opacity: 0.85;
+		transform: scale(1.02);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.change-champion-button.shift-active {
+		animation: none;
+	}
+}
+
+.mat-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.disabled-card {
+	background-color: var(--mat-sys-surface-container);
+	border: 2px dashed var(--mat-sys-outline);
+}
+
+.disabled-message {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 0.5rem;
+	padding: 30px 0;
+}
+
+.disabled-icon {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	color: var(--mat-sys-outline);
+	opacity: 0.6;
+}
+
+.disabled-message .mat-body-large {
+	margin: 0;
+	color: var(--mat-sys-on-surface);
+	font-weight: 500;
+}
+
+.disabled-message .mat-body-small {
+	margin: 0;
+	color: var(--mat-sys-on-surface-variant);
+}
+
+.enable-lane-button {
+	margin-left: auto;
+}

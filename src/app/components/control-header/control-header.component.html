@@ -1,0 +1,45 @@
+<header class="controls">
+	<div class="button-group">
+		<button
+			type="button"
+			mat-raised-button
+			color="primary"
+			class="roll-button"
+			[disabled]="isLoading() || !hasChampions()"
+			(click)="onRoll()"
+		>
+			<mat-icon aria-hidden="true">casino</mat-icon>
+			<span>Roll Champions</span>
+		</button>
+		<button
+			type="button"
+			mat-raised-button
+			color="accent"
+			class="copy-button"
+			[disabled]="!canCopyDraft()"
+			(click)="onCopyDraft()"
+		>
+			<mat-icon aria-hidden="true">content_copy</mat-icon>
+			<span>Copy Draft</span>
+		</button>
+	</div>
+	<div class="hint mat-body-small">
+		<mat-icon aria-hidden="true">info</mat-icon>
+		<span>Each roll keeps champions unique across every lane.</span>
+	</div>
+	@if (isLoading()) {
+	<div class="status mat-body-small" aria-live="polite">
+		<mat-icon aria-hidden="true">autorenew</mat-icon>
+		<span>Loading champion data&hellip;</span>
+	</div>
+	} @else if (loadError(); as errorMessage) {
+	<div class="status error mat-body-small" aria-live="polite">
+		<mat-icon aria-hidden="true" color="warn">error</mat-icon>
+		<span>{{ errorMessage }}</span>
+		<button type="button" mat-button color="accent" (click)="onRetry()">
+			<mat-icon aria-hidden="true">refresh</mat-icon>
+			<span>Retry</span>
+		</button>
+	</div>
+	}
+</header>

@@ -1,0 +1,26 @@
+:host {
+	display: block;
+}
+
+.randomizer {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.lane-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	justify-content: center;
+}
+
+.warning-card mat-card-content {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.warning-card mat-icon {
+	font-size: 1.25rem;
+}

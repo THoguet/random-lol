@@ -1,0 +1,28 @@
+<section class="randomizer" aria-live="polite">
+	<app-control-header
+		[isLoading]="isLoading()"
+		[hasChampions]="hasChampions()"
+		[loadError]="loadError()"
+		[canCopyDraft]="canCopyDraft()"
+		(roll)="rollAssignments()"
+		(retry)="retryLoad()"
+		(copyDraft)="copyDraftToClipboard()"
+	></app-control-header>
+	<div class="lane-grid">
+		@for (assignment of laneAssignments(); track assignment.lane) {
+		<app-lane-card
+			[lane]="assignment.lane"
+			[laneLabel]="laneLabel(assignment.lane)"
+			[champion]="assignment.champion"
+			[canReRoll]="canReRoll()[assignment.lane]"
+			[isLoading]="isLoading()"
+			[hasChampions]="hasChampions()"
+			[isShiftPressed]="isShiftPressed()"
+			[disabled]="disabledLanes().has(assignment.lane)"
+			(tryReroll)="tryReroll($event)"
+			(changeChampion)="changeChampion($event.lane, $event.forceReroll)"
+			(toggleDisableLane)="toggleLane($event)"
+		></app-lane-card>
+		}
+	</div>
+</section>

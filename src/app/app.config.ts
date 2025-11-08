@@ -10,7 +10,7 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
-import { imageCacheInterceptor } from './image-cache.interceptor';
+import { imageCacheInterceptor } from './interceptors/image-cache.interceptor';
 
 export const appConfig: ApplicationConfig = {
 	providers: [

@@ -1,0 +1,117 @@
+@if (disabled()) {
+<mat-card class="lane-card disabled-card">
+	<mat-card-header class="mat-header">
+		<mat-card-title-group>
+			<mat-card-title>{{ laneLabel() }}</mat-card-title>
+			<mat-card-subtitle>Lane currently disabled</mat-card-subtitle>
+		</mat-card-title-group>
+	</mat-card-header>
+	<mat-card-content>
+		<div class="disabled-message">
+			<mat-icon class="disabled-icon" aria-hidden="true">block</mat-icon>
+			<p class="mat-body-large">This lane has been disabled</p>
+			<p class="mat-body-small">You chose to exclude this lane from the random selection.</p>
+		</div>
+		<button
+			type="button"
+			matFab
+			extended
+			color="primary"
+			class="enable-lane-button"
+			(click)="onToggleDisableLane()"
+		>
+			<mat-icon aria-hidden="true">add_circle</mat-icon>
+			Enable Lane
+		</button>
+	</mat-card-content>
+</mat-card>
+} @else {
+<mat-card class="lane-card">
+	<mat-card-header class="mat-header">
+		<mat-card-title-group>
+			<mat-card-title>{{ laneLabel() }}</mat-card-title>
+			<mat-card-subtitle>
+				{{ champion() ? 'Unique pick locked in' : 'Champion needed for this lane' }}
+			</mat-card-subtitle>
+		</mat-card-title-group>
+		<button
+			matMiniFab
+			[disabled]="isLoading() || !hasChampions()"
+			(click)="onToggleDisableLane()"
+		>
+			<mat-icon aria-hidden="true">close</mat-icon>
+		</button>
+	</mat-card-header>
+	<mat-card-content>
+		@if (champion(); as champ) {
+		<div class="champion-details">
+			<img
+				[ngSrc]="champ.icon"
+				width="96"
+				height="96"
+				[class.loading-image]="isLoading()"
+				[alt]="champ.name + ' portrait'"
+				[priority]="true"
+				class="champion-icon"
+			/>
+			<p class="champion-name mat-title-medium">{{ champ.name }}</p>
+		</div>
+		<mat-chip-set class="roles-set" [attr.aria-label]="'Roles for ' + champ.name">
+			@for (role of champ.roles; track role) {
+			<mat-chip>{{ roleLabel(role) }}</mat-chip>
+			}
+		</mat-chip-set>
+		} @else {
+		<p class="champion-name champion-name-empty mat-title-medium">No champion available</p>
+		<p class="champion-roles mat-body-small">Roll again once champions finish loading.</p>
+		} @if (canReRoll() === undefined) {
+		<button
+			type="button"
+			matFab
+			extended
+			color="accent"
+			class="change-champion-button"
+			[disabled]="isLoading() || !hasChampions()"
+			(click)="onTryReroll()"
+		>
+			<mat-icon aria-hidden="true">casino</mat-icon>
+			Try to Re-Roll !
+		</button>
+		} @else if (canReRoll()! > 0) {
+		<button
+			type="button"
+			matFab
+			extended
+			color="accent"
+			class="change-champion-button"
+			[disabled]="isLoading() || !hasChampions()"
+			(click)="onChangeChampion(false)"
+		>
+			<mat-icon aria-hidden="true">refresh</mat-icon>
+			Re-Roll !
+		</button>
+		} @else {
+		<button
+			type="button"
+			matFab
+			extended
+			color="accent"
+			class="change-champion-button"
+			[disabled]="isLoading() || !hasChampions() || (!isShiftPressed() && !canReRoll())"
+			(click)="onChangeChampion(isShiftPressed())"
+			[class.shift-active]="isShiftPressed()"
+		>
+			@if (!isShiftPressed()) {
+			<mat-icon aria-hidden="true">heart_broken</mat-icon>
+			} @else {
+			<mat-icon aria-hidden="true">lock_open_right</mat-icon>
+			} @if (!isShiftPressed()) {
+			<p>No re-rolls left</p>
+			} @else {
+			<p>Force Re-Roll!</p>
+			}
+		</button>
+		}
+	</mat-card-content>
+</mat-card>
+}
