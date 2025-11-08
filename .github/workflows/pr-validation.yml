@@ -69,7 +69,7 @@ jobs:
               if: always()
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
-                  files: ./coverage/vac-optimizer/lcov.info
+                  files: ./coverage/random-lol/lcov.info
                   fail_ci_if_error: false
 
     build:
@@ -94,7 +94,7 @@ jobs:
 
             - name: Check bundle size
               run: |
-                  du -sh dist/vac-optimizer/browser
+                  du -sh dist/random-lol/browser
                   echo "Build completed successfully"
 
             - name: Upload build artifacts

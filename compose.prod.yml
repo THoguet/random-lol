@@ -1,10 +1,10 @@
 services:
-    vac-optimizer:
+    random-lol:
         build:
             context: .
             dockerfile: Dockerfile
-        image: vac-optimizer:latest
-        container_name: vac-optimizer-prod
+        image: random-lol:latest
+        container_name: random-lol-prod
         restart: always
         ports:
             - '80:4000'
@@ -42,8 +42,8 @@ services:
                 max-size: '10m'
                 max-file: '3'
         networks:
-            - vac-optimizer-network
+            - random-lol-network
 
 networks:
-    vac-optimizer-network:
+    random-lol-network:
         driver: bridge
