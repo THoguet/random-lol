@@ -55,7 +55,7 @@ export class ChampionRandomizerComponent {
 	protected readonly hasChampions = computed(() => this.champions().length > 0);
 
 	protected readonly assignments = signal<Record<Lane, Champion | null>>(
-		this.createEmptyAssignments()
+		this.createEmptyAssignments(),
 	);
 
 	protected readonly usedChampions = computed<Record<Lane, Champion | null>>(() => {
@@ -111,11 +111,11 @@ export class ChampionRandomizerComponent {
 				champion,
 				rolesText,
 			} satisfies LaneAssignmentView;
-		})
+		}),
 	);
 
 	protected readonly hasMissingChampion = computed(() =>
-		this.lanes.some((lane) => this.assignments()[lane] === null)
+		this.lanes.some((lane) => this.assignments()[lane] === null),
 	);
 
 	constructor() {
@@ -154,7 +154,7 @@ export class ChampionRandomizerComponent {
 
 		for (const lane of this.lanes) {
 			const candidates = (championsByLaneMap.get(lane) || []).filter(
-				(champion) => !selected.has(champion.name)
+				(champion) => !selected.has(champion.name),
 			);
 
 			if (candidates.length === 0) {

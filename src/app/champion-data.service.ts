@@ -134,7 +134,7 @@ export class ChampionDataService {
 
 		try {
 			const response = await firstValueFrom(
-				this.http.get<Record<string, RemoteChampion>>(CHAMPION_DATA_URL)
+				this.http.get<Record<string, RemoteChampion>>(CHAMPION_DATA_URL),
 			);
 
 			const champions = Object.entries(response)
@@ -174,8 +174,8 @@ export class ChampionDataService {
 			new Set(
 				data.positions
 					.map((position) => POSITION_TO_LANE[position])
-					.filter((role): role is Lane => role !== undefined)
-			)
+					.filter((role): role is Lane => role !== undefined),
+			),
 		);
 
 		if (roles.length === 0 || !data.icon) {

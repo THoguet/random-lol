@@ -5,11 +5,13 @@ This project uses a proxy to avoid CORS issues when fetching champion data from 
 ## Architecture
 
 ### Development (`ng serve`)
+
 - Uses `proxy.conf.json` configuration
 - Angular CLI dev server handles the proxy
 - Requests to `/api/champions` are forwarded to the external CDN
 
 ### Production/SSR (`ng build` + `npm run serve:ssr:random-lol`)
+
 - Uses `http-proxy-middleware` in `src/server.ts`
 - Express server handles the proxy
 - Same endpoint `/api/champions` works consistently
@@ -31,12 +33,14 @@ This project uses a proxy to avoid CORS issues when fetching champion data from 
 ## Testing
 
 ### Development
+
 ```bash
 npm start
 # Visit http://localhost:4200
 ```
 
 ### Production SSR
+
 ```bash
 npm run build
 npm run serve:ssr:random-lol
