@@ -194,7 +194,7 @@ describe('ChampionDataService', () => {
 			const champions = service.champions();
 			for (let i = 1; i < champions.length; i++) {
 				expect(champions[i - 1].name.localeCompare(champions[i].name)).toBeLessThanOrEqual(
-					0
+					0,
 				);
 			}
 		});

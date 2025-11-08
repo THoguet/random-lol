@@ -66,7 +66,7 @@ describe('ChampionRandomizerComponent', () => {
 				championsByLane: championsByLaneSignal.asReadonly(),
 				loading: loadingSignal.asReadonly(),
 				error: errorSignal.asReadonly(),
-			}
+			},
 		);
 
 		championDataSpy.ensureLoaded.and.returnValue(Promise.resolve());
@@ -83,7 +83,7 @@ describe('ChampionRandomizerComponent', () => {
 		}).compileComponents();
 
 		championDataService = TestBed.inject(
-			ChampionDataService
+			ChampionDataService,
 		) as jasmine.SpyObj<ChampionDataService>;
 		fixture = TestBed.createComponent(ChampionRandomizerComponent);
 		component = fixture.componentInstance;
@@ -230,7 +230,7 @@ describe('ChampionRandomizerComponent', () => {
 					['mid', null],
 					['adc', null],
 					['support', null],
-				])
+				]),
 			);
 
 			// Set reroll bank to 0.5 (less than 1)
@@ -286,7 +286,7 @@ describe('ChampionRandomizerComponent', () => {
 					['mid', mockChampions[1]],
 					['adc', mockChampions[2]],
 					['support', mockChampions[3]],
-				])
+				]),
 			);
 
 			expect(component['canCopyDraft']()).toBe(true);
@@ -339,7 +339,7 @@ describe('ChampionRandomizerComponent', () => {
 			}
 
 			spyOn(navigator.clipboard, 'writeText').and.returnValue(
-				Promise.reject(new Error('Clipboard error'))
+				Promise.reject(new Error('Clipboard error')),
 			);
 			spyOn(console, 'error');
 			component['rollAssignments']();

@@ -34,7 +34,7 @@ describe('PreloadLinkDirective', () => {
 		setTimeout(() => {
 			const preloadLinks = document.querySelectorAll('link[rel="preload"][as="image"]');
 			const hasTestLink = Array.from(preloadLinks).some((link) =>
-				link.getAttribute('href')?.includes('test.png')
+				link.getAttribute('href')?.includes('test.png'),
 			);
 			expect(hasTestLink).toBe(true);
 			done();
@@ -47,10 +47,10 @@ describe('PreloadLinkDirective', () => {
 
 		setTimeout(() => {
 			const preloadLinks = document.querySelectorAll(
-				'link[rel="preload"][as="image"][fetchpriority="high"]'
+				'link[rel="preload"][as="image"][fetchpriority="high"]',
 			);
 			const hasTestLink = Array.from(preloadLinks).some((link) =>
-				link.getAttribute('href')?.includes('test.png')
+				link.getAttribute('href')?.includes('test.png'),
 			);
 			expect(hasTestLink).toBe(true);
 			done();
@@ -66,7 +66,7 @@ describe('PreloadLinkDirective', () => {
 
 		setTimeout(() => {
 			const preloadLinks = document.querySelectorAll(
-				'link[rel="preload"][href="https://example.com/test.png"]'
+				'link[rel="preload"][href="https://example.com/test.png"]',
 			);
 			// Should only have one link, not duplicates
 			expect(preloadLinks.length).toBeLessThanOrEqual(1);

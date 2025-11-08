@@ -79,7 +79,7 @@ describe('imageCacheInterceptor', () => {
 			.subscribe();
 
 		const req = httpMock.expectOne(
-			'https://ddragon.leagueoflegends.com/cdn/14.1.1/img/champion/Aatrox.png'
+			'https://ddragon.leagueoflegends.com/cdn/14.1.1/img/champion/Aatrox.png',
 		);
 		expect(req.request.headers.get('Cache-Control')).toBe('public, max-age=86400, immutable');
 		req.flush({});

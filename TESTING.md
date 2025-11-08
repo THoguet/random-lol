@@ -3,6 +3,7 @@
 ## Quick Start
 
 Run all tests:
+
 ```bash
 npm test
 ```
@@ -31,25 +32,30 @@ src/app/
 ## What's Tested
 
 ### Components (4)
+
 - ✅ **App** - Main application component
 - ✅ **ChampionRandomizerComponent** - Core randomization logic
 - ✅ **ControlHeaderComponent** - User controls
 - ✅ **LaneCardComponent** - Individual lane display
 
 ### Services (3)
+
 - ✅ **ChampionDataService** - Data fetching and caching
 - ✅ **ImagePreloadService** - Image preloading
 - ✅ **RandomNumber** - Secure random generation
 
 ### Directives (1)
+
 - ✅ **PreloadLinkDirective** - Link preloading
 
 ### Interceptors (1)
+
 - ✅ **imageCacheInterceptor** - HTTP caching
 
 ## Key Test Scenarios
 
 ### Champion Randomizer
+
 - Random champion assignment for each lane
 - Lane enable/disable functionality
 - Reroll system with bank management
@@ -58,6 +64,7 @@ src/app/
 - Copy draft to clipboard
 
 ### Champion Data Service
+
 - API data fetching
 - LocalStorage caching (24-hour expiry)
 - Cache validation and invalidation
@@ -65,11 +72,13 @@ src/app/
 - Champion filtering and sorting
 
 ### Random Number Service
+
 - Cryptographically secure random numbers
 - Range validation
 - Edge case handling
 
 ### Image Management
+
 - Cache control headers
 - Image preloading
 - Duplicate prevention
@@ -78,6 +87,7 @@ src/app/
 ## Test Configuration
 
 The project uses:
+
 - **Framework**: Jasmine
 - **Runner**: Karma
 - **Browser**: Chrome (or ChromeHeadless for CI)
@@ -85,6 +95,7 @@ The project uses:
 ## Continuous Integration
 
 For CI environments without a display:
+
 ```bash
 npm test -- --watch=false --browsers=ChromeHeadless
 ```
@@ -92,6 +103,7 @@ npm test -- --watch=false --browsers=ChromeHeadless
 ## Code Coverage
 
 Generate coverage report:
+
 ```bash
 ng test --no-watch --code-coverage
 ```
@@ -110,20 +122,24 @@ Coverage report will be available in `coverage/` directory.
 ## Troubleshooting
 
 ### Tests won't run
+
 - Ensure all dependencies are installed: `npm install`
 - Check that Chrome is installed for Karma
 
 ### Specific test failing
+
 - Run tests in watch mode: `npm test`
 - Check console output for specific error messages
 
 ### Coverage not generating
+
 - Ensure you're using the `--code-coverage` flag
 - Check that all test files end with `.spec.ts`
 
 ## Contributing
 
 When adding new features:
+
 1. Write tests first (TDD approach)
 2. Ensure all tests pass
 3. Maintain high code coverage

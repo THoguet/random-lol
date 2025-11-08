@@ -37,7 +37,7 @@ describe('RandomNumber', () => {
 
 		it('should throw RangeError for max > Number.MAX_SAFE_INTEGER', () => {
 			expect(() => RandomNumber.getSecureRandomInt(Number.MAX_SAFE_INTEGER + 1)).toThrowError(
-				RangeError
+				RangeError,
 			);
 		});
 

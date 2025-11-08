@@ -40,7 +40,7 @@ describe('ImagePreloadService', () => {
 		});
 
 		championDataService = TestBed.inject(
-			ChampionDataService
+			ChampionDataService,
 		) as jasmine.SpyObj<ChampionDataService>;
 		service = TestBed.inject(ImagePreloadService);
 	});

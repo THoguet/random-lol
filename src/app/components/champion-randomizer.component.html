@@ -12,18 +12,18 @@
 	></app-control-header>
 	<div class="lane-grid">
 		@for (assignment of laneAssignments(); track assignment.lane) {
-		<app-lane-card
-			[lane]="assignment.lane"
-			[laneLabel]="laneLabel(assignment.lane)"
-			[champion]="assignment.champion"
-			[canReRoll]="reRollBank() > 0"
-			[isLoading]="isLoading()"
-			[hasChampions]="hasChampions()"
-			[isShiftPressed]="isShiftPressed()"
-			[disabled]="disabledLanes().has(assignment.lane)"
-			(changeChampion)="changeChampion($event.lane, $event.forceReroll)"
-			(toggleDisableLane)="toggleLane($event)"
-		></app-lane-card>
+			<app-lane-card
+				[lane]="assignment.lane"
+				[laneLabel]="laneLabel(assignment.lane)"
+				[champion]="assignment.champion"
+				[canReRoll]="reRollBank() > 0"
+				[isLoading]="isLoading()"
+				[hasChampions]="hasChampions()"
+				[isShiftPressed]="isShiftPressed()"
+				[disabled]="disabledLanes().has(assignment.lane)"
+				(changeChampion)="changeChampion($event.lane, $event.forceReroll)"
+				(toggleDisableLane)="toggleLane($event)"
+			></app-lane-card>
 		}
 	</div>
 </section>

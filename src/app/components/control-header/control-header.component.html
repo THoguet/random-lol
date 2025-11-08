@@ -36,18 +36,18 @@
 		<span class="centered-text">{{ rerollBank() }}</span>
 	</div>
 	@if (isLoading()) {
-	<div class="status mat-body-small" aria-live="polite">
-		<mat-icon aria-hidden="true">autorenew</mat-icon>
-		<span>Loading champion data&hellip;</span>
-	</div>
+		<div class="status mat-body-small" aria-live="polite">
+			<mat-icon aria-hidden="true">autorenew</mat-icon>
+			<span>Loading champion data&hellip;</span>
+		</div>
 	} @else if (loadError(); as errorMessage) {
-	<div class="status error mat-body-small" aria-live="polite">
-		<mat-icon aria-hidden="true" color="warn">error</mat-icon>
-		<span>{{ errorMessage }}</span>
-		<button type="button" mat-button color="accent" (click)="onRetry()">
-			<mat-icon aria-hidden="true">refresh</mat-icon>
-			<span>Retry</span>
-		</button>
-	</div>
+		<div class="status error mat-body-small" aria-live="polite">
+			<mat-icon aria-hidden="true" color="warn">error</mat-icon>
+			<span>{{ errorMessage }}</span>
+			<button type="button" mat-button color="accent" (click)="onRetry()">
+				<mat-icon aria-hidden="true">refresh</mat-icon>
+				<span>Retry</span>
+			</button>
+		</div>
 	}
 </header>
