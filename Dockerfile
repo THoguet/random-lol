@@ -1,5 +1,5 @@
 # Stage 1: Build the Angular application
-FROM node:20-alpine AS builder
+FROM node:25-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Production image
-FROM node:20-alpine AS production
+FROM node:25-alpine AS production
 
 # Set working directory
 WORKDIR /app
