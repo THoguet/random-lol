@@ -13,6 +13,7 @@ export class ImagePreloadService {
 	constructor() {
 		afterNextRender(() => {
 			this.initCache();
+			// Start preloading immediately without waiting for idle
 			this.schedulePreload();
 		});
 	}
@@ -50,12 +51,9 @@ export class ImagePreloadService {
 	}
 
 	private schedulePreload(): void {
-		// Wait for the browser to be idle before preloading images
-		if ('requestIdleCallback' in window) {
-			requestIdleCallback(() => this.preloadImages(), { timeout: 5000 });
-		} else {
-			setTimeout(() => this.preloadImages(), 2000);
-		}
+		// Start preloading immediately to cache images before they're requested by components
+		// This fixes the issue where caching doesn't work on first page load
+		this.preloadImages();
 	}
 
 	private async preloadImages(): Promise<void> {
@@ -72,14 +70,24 @@ export class ImagePreloadService {
 
 		console.log(`Preloading ${imagesToPreload.length} champion images...`);
 
-		// Preload images in batches to avoid overwhelming the network
+		// Preload first batch with high priority (likely to be displayed first)
+		// Use smaller batch size and no delay for first batch to ensure images
+		// are available when components render
+		const firstBatchSize = 20;
+		const firstBatch = imagesToPreload.slice(0, firstBatchSize);
+		const remainingImages = imagesToPreload.slice(firstBatchSize);
+
+		// Preload first batch immediately with high priority
+		await Promise.allSettled(firstBatch.map((url) => this.preloadAndCacheImage(url)));
+
+		// Preload remaining images in batches to avoid overwhelming the network
 		const batchSize = 10;
-		for (let i = 0; i < imagesToPreload.length; i += batchSize) {
-			const batch = imagesToPreload.slice(i, i + batchSize);
+		for (let i = 0; i < remainingImages.length; i += batchSize) {
+			const batch = remainingImages.slice(i, i + batchSize);
 			await Promise.allSettled(batch.map((url) => this.preloadAndCacheImage(url)));
 
 			// Small delay between batches to keep the browser responsive
-			if (i + batchSize < imagesToPreload.length) {
+			if (i + batchSize < remainingImages.length) {
 				await new Promise((resolve) => setTimeout(resolve, 100));
 			}
 		}

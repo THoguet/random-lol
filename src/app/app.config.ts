@@ -21,7 +21,7 @@ export const appConfig: ApplicationConfig = {
 		provideHttpClient(withFetch(), withInterceptors([imageCacheInterceptor])),
 		provideServiceWorker('ngsw-worker.js', {
 			enabled: !isDevMode(),
-			registrationStrategy: 'registerWhenStable:30000',
+			registrationStrategy: 'registerImmediately',
 		}),
 	],
 };
