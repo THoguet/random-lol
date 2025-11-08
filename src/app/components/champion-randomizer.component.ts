@@ -238,8 +238,6 @@ export class ChampionRandomizerComponent {
 		const number = RandomNumber.getSecureRandomInt(notUsedChampionsForLane.length);
 
 		const champion = notUsedChampionsForLane[number];
-		console.log('Rerolled champion for lane', lane, 'to', champion);
-		console.log('Rerolled champion index:', number);
 		this.assignments.update((current) => {
 			const newState = new Map(current);
 			newState.set(lane, champion);
