@@ -63,7 +63,7 @@ export class ChampionRandomizerComponent {
 	protected readonly hasChampions = computed(() => this.champions().length > 0);
 
 	protected readonly assignments = signal<Map<Lane, Champion | null>>(
-		this.createEmptyAssignments(),
+		this.createEmptyAssignments()
 	);
 
 	protected readonly disabledLanesArray = computed(() => {
@@ -104,8 +104,8 @@ export class ChampionRandomizerComponent {
 						(champion) =>
 							!this.assignmentsArray().some(
 								(assignedChampion) =>
-									assignedChampion && assignedChampion.name === champion.name,
-							),
+									assignedChampion && assignedChampion.name === champion.name
+							)
 					) || [];
 			notUsed.set(lane, champion);
 		}
@@ -125,7 +125,7 @@ export class ChampionRandomizerComponent {
 				champion,
 				rolesText,
 			} satisfies LaneAssignmentView;
-		}),
+		})
 	);
 
 	protected readonly canCopyDraft = computed<boolean>(() => {
@@ -185,7 +185,7 @@ export class ChampionRandomizerComponent {
 
 		for (const lane of this.activatedLanesArray()) {
 			const candidates = (championsByLaneMap.get(lane) || []).filter(
-				(champion: Champion) => !selected.has(champion.name),
+				(champion: Champion) => !selected.has(champion.name)
 			);
 
 			if (candidates.length === 0) {
@@ -253,6 +253,7 @@ export class ChampionRandomizerComponent {
 				this.reRollBank.set(this.reRollBank() + 1);
 			} else {
 				newSet.add(lane);
+				this.reRollBank.set(this.reRollBank() - 1);
 			}
 			return newSet;
 		});
