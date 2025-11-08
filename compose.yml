@@ -1,0 +1,31 @@
+services:
+    vac-optimizer:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: vac-optimizer:latest
+        container_name: vac-optimizer
+        restart: unless-stopped
+        ports:
+            - '4000:4000'
+        environment:
+            - NODE_ENV=production
+            - PORT=4000
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'node',
+                    '-e',
+                    "require('http').get('http://localhost:4000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
+        networks:
+            - vac-optimizer-network
+
+networks:
+    vac-optimizer-network:
+        driver: bridge
