@@ -18,11 +18,13 @@ This application implements a comprehensive multi-layer image caching strategy f
 - Cache name: `lol-champion-images-v1`
 - Cache expiry: 7 days
 - Features:
-    - Preloads images in batches (10 images per batch)
-    - Uses `requestIdleCallback` for non-blocking preload
+    - Preloads images immediately after first render (no idle callback delay)
+    - First 20 images loaded with high priority for instant availability
+    - Remaining images preloaded in batches of 10
     - Automatic cleanup of expired cache entries
     - Adds custom metadata (`x-cached-date`) to track cache age
     - Checks cache before fetching from network
+    - Preloads images into both Cache API and browser HTTP cache
 
 ### 3. Service Worker (Production Only)
 
@@ -32,7 +34,7 @@ This application implements a comprehensive multi-layer image caching strategy f
     - **champion-images**: Caches champion images for 7 days
 - Strategy: `performance` (cache-first, network fallback)
 - Only active in production builds (`!isDevMode()`)
-- Registers 30 seconds after app stability
+- Registers immediately to intercept image requests as soon as possible
 
 ### 4. Local Storage (`champion-data.service.ts`)
 
@@ -45,8 +47,11 @@ This application implements a comprehensive multi-layer image caching strategy f
 1. **First Load**:
     - App fetches champion data from API
     - Data is cached in LocalStorage
-    - Images are preloaded in background using Cache API
-    - HTTP cache headers enable browser caching
+    - Images are preloaded immediately in the background:
+        - First 20 images loaded with high priority
+        - Remaining images loaded in batches
+    - Images cached in both Cache API and browser HTTP cache
+    - Service Worker installs and activates for future requests
 
 2. **Subsequent Loads**:
     - Champion data loaded from LocalStorage
