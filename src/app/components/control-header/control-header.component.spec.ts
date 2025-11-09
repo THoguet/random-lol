@@ -20,6 +20,15 @@ describe('ControlHeaderComponent', () => {
 			'setFearlessDraftEnabled',
 		]);
 
+		// Provide minimal signal-like properties the template will call as functions
+		(mockStateService as any).isLoading = () => false;
+		(mockStateService as any).hasChampions = () => true;
+		(mockStateService as any).canCopyDraft = () => false;
+		(mockStateService as any).rerollPercentage = () => 0;
+		(mockStateService as any).reRollBank = () => 0;
+		(mockStateService as any).fearlessDraftEnabled = () => true;
+		(mockStateService as any).loadError = () => null;
+
 		await TestBed.configureTestingModule({
 			imports: [ControlHeaderComponent],
 			providers: [

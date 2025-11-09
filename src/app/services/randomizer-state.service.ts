@@ -82,8 +82,8 @@ export class RandomizerStateService {
 						(champion) =>
 							!this.assignmentsArray().some(
 								(assignedChampion) =>
-									assignedChampion && assignedChampion.name === champion.name
-							) && !blacklisted.has(champion.name)
+									assignedChampion && assignedChampion.name === champion.name,
+							) && !blacklisted.has(champion.name),
 					) || [];
 			notUsed.set(lane, champion);
 		}
@@ -103,7 +103,7 @@ export class RandomizerStateService {
 				champion,
 				rolesText,
 			} satisfies LaneAssignmentView;
-		})
+		}),
 	);
 
 	public readonly canCopyDraft = computed<boolean>(() => {
@@ -179,7 +179,7 @@ export class RandomizerStateService {
 
 		for (const lane of this.activatedLanesArray()) {
 			const candidates = (championsByLaneMap.get(lane) || []).filter(
-				(champion: Champion) => !selected.has(champion.name)
+				(champion: Champion) => !selected.has(champion.name),
 			);
 
 			if (candidates.length === 0) {

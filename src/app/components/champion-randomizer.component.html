@@ -1,11 +1,11 @@
 <section class="randomizer" aria-live="polite">
 	@if (state.showAndy()) {
-	<img src="http://andy.nessar.fr" alt="andy le perv" class="andy-image" />
+		<img src="http://andy.nessar.fr" alt="andy le perv" class="andy-image" />
 	}
 	<app-control-header></app-control-header>
 	<div class="lane-grid">
 		@for (assignment of state.laneAssignments(); track assignment.lane) {
-		<app-lane-card [lane]="assignment.lane"></app-lane-card>
+			<app-lane-card [lane]="assignment.lane"></app-lane-card>
 		}
 	</div>
 </section>

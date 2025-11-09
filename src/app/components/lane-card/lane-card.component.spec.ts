@@ -16,6 +16,18 @@ describe('LaneCardComponent', () => {
 			'toggleLane',
 		]);
 
+		// Minimal signal-like stubs used by the component template/computeds
+		(mockStateService as any).disabledLanes = () => new Set();
+		(mockStateService as any).assignments = () =>
+			new Map([
+				['top', null],
+				['jungle', null],
+				['mid', null],
+				['adc', null],
+				['support', null],
+			]);
+		(mockStateService as any).reRollBank = () => 0;
+
 		await TestBed.configureTestingModule({
 			imports: [LaneCardComponent],
 			providers: [
