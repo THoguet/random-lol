@@ -1,0 +1,27 @@
+.setting-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 1rem 0;
+}
+
+.setting-item label {
+	font-size: 1.1rem;
+	font-weight: 500;
+}
+
+.setting-description {
+	margin: 0;
+	font-size: 0.875rem;
+	color: #666;
+	line-height: 1.4;
+}
+
+mat-dialog-content {
+	min-width: 400px;
+	max-width: 500px;
+}
+
+mat-dialog-actions {
+	padding: 1rem 1.5rem;
+}

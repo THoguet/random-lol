@@ -6,7 +6,7 @@
 				mat-raised-button
 				color="primary"
 				class="roll-button"
-				[disabled]="isLoading() || !hasChampions()"
+				[disabled]="state.isLoading() || !state.hasChampions()"
 				(click)="onRoll()"
 			>
 				<mat-icon aria-hidden="true">casino</mat-icon>
@@ -17,11 +17,34 @@
 				mat-raised-button
 				color="accent"
 				class="copy-button"
-				[disabled]="!canCopyDraft()"
+				[disabled]="!state.canCopyDraft()"
 				(click)="onCopyDraft()"
 			>
 				<mat-icon aria-hidden="true">content_copy</mat-icon>
 				<span>Copy Draft</span>
+			</button>
+			@if (state.fearlessDraftEnabled()) {
+			<button
+				type="button"
+				mat-raised-button
+				color="warn"
+				class="reset-button"
+				[disabled]="state.isLoading() || !state.hasChampions()"
+				(click)="onReset()"
+			>
+				<mat-icon aria-hidden="true">restart_alt</mat-icon>
+				<span>Reset Blacklist</span>
+			</button>
+			}
+			<button
+				type="button"
+				mat-stroked-button
+				color="primary"
+				class="settings-button"
+				(click)="openSettings()"
+			>
+				<mat-icon aria-hidden="true">settings</mat-icon>
+				<span>Settings</span>
 			</button>
 		</div>
 		<div class="hint mat-body-small">
@@ -32,22 +55,22 @@
 		</div>
 	</div>
 	<div style="position: relative">
-		<mat-progress-spinner class="" mode="determinate" [value]="rerollPercentage" />
-		<span class="centered-text">{{ rerollBank() }}</span>
+		<mat-progress-spinner class="" mode="determinate" [value]="state.rerollPercentage()" />
+		<span class="centered-text">{{ state.reRollBank() }}</span>
 	</div>
-	@if (isLoading()) {
-		<div class="status mat-body-small" aria-live="polite">
-			<mat-icon aria-hidden="true">autorenew</mat-icon>
-			<span>Loading champion data&hellip;</span>
-		</div>
-	} @else if (loadError(); as errorMessage) {
-		<div class="status error mat-body-small" aria-live="polite">
-			<mat-icon aria-hidden="true" color="warn">error</mat-icon>
-			<span>{{ errorMessage }}</span>
-			<button type="button" mat-button color="accent" (click)="onRetry()">
-				<mat-icon aria-hidden="true">refresh</mat-icon>
-				<span>Retry</span>
-			</button>
-		</div>
+	@if (state.isLoading()) {
+	<div class="status mat-body-small" aria-live="polite">
+		<mat-icon aria-hidden="true">autorenew</mat-icon>
+		<span>Loading champion data&hellip;</span>
+	</div>
+	} @else if (state.loadError(); as errorMessage) {
+	<div class="status error mat-body-small" aria-live="polite">
+		<mat-icon aria-hidden="true" color="warn">error</mat-icon>
+		<span>{{ errorMessage }}</span>
+		<button type="button" mat-button color="accent" (click)="onRetry()">
+			<mat-icon aria-hidden="true">refresh</mat-icon>
+			<span>Retry</span>
+		</button>
+	</div>
 	}
 </header>

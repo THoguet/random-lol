@@ -1,32 +1,11 @@
 <section class="randomizer" aria-live="polite">
-	@if (showAndy()) {
+	@if (state.showAndy()) {
 	<img src="http://andy.nessar.fr" alt="andy le perv" class="andy-image" />
 	}
-	<app-control-header
-		[isLoading]="isLoading()"
-		[hasChampions]="hasChampions()"
-		[loadError]="loadError()"
-		[canCopyDraft]="canCopyDraft()"
-		[rerollBank]="reRollBank()"
-		[rerollBankMax]="reRollBankMax()"
-		(roll)="rollAssignments()"
-		(retry)="retryLoad()"
-		(copyDraft)="copyDraftToClipboard()"
-	></app-control-header>
+	<app-control-header></app-control-header>
 	<div class="lane-grid">
-		@for (assignment of laneAssignments(); track assignment.lane) {
-		<app-lane-card
-			[lane]="assignment.lane"
-			[laneLabel]="laneLabel(assignment.lane)"
-			[champion]="assignment.champion"
-			[canReRoll]="reRollBank() > 0"
-			[isLoading]="isLoading()"
-			[hasChampions]="hasChampions()"
-			[isShiftPressed]="isShiftPressed()"
-			[disabled]="disabledLanes().has(assignment.lane)"
-			(changeChampion)="changeChampion($event.lane, $event.forceReroll)"
-			(toggleDisableLane)="toggleLane($event)"
-		></app-lane-card>
+		@for (assignment of state.laneAssignments(); track assignment.lane) {
+		<app-lane-card [lane]="assignment.lane"></app-lane-card>
 		}
 	</div>
 </section>

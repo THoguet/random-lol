@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SettingsDialogComponent } from '../settings-dialog/settings-dialog.component';
+import { RandomizerStateService } from '../../services/randomizer-state.service';
 
 @Component({
 	selector: 'app-control-header',
@@ -11,33 +14,36 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 	styleUrl: './control-header.component.css',
 })
 export class ControlHeaderComponent {
-	isLoading = input<boolean>(false);
-	hasChampions = input<boolean>(false);
-	loadError = input<string | null>(null);
-	canCopyDraft = input<boolean>(false);
-	rerollBank = input<number>(0);
-	rerollBankMax = input<number>(0);
-
-	roll = output<void>();
-	retry = output<void>();
-	copyDraft = output<void>();
+	private readonly dialog = inject(MatDialog);
+	protected readonly state = inject(RandomizerStateService);
 
 	onRoll(): void {
-		this.roll.emit();
+		this.state.rollAssignments();
 	}
 
 	onRetry(): void {
-		this.retry.emit();
+		this.state.retryLoad();
 	}
 
 	onCopyDraft(): void {
-		this.copyDraft.emit();
+		void this.state.copyDraftToClipboard();
 	}
 
-	get rerollPercentage(): number {
-		if (this.rerollBankMax() === 0) {
-			return 0;
-		}
-		return (this.rerollBank() / this.rerollBankMax()) * 100;
+	onReset(): void {
+		this.state.resetBlacklist();
+	}
+
+	openSettings(): void {
+		// Open the settings dialog and pass an immediate setter callback so
+		// the dialog can update the setting live (no Save/Cancel required).
+		this.dialog.open(SettingsDialogComponent, {
+			data: {
+				fearlessDraftEnabled: this.state.fearlessDraftEnabled(),
+				setFearless: (value: boolean) => {
+					// Update the service state immediately
+					this.state.setFearlessDraftEnabled(value);
+				},
+			},
+		});
 	}
 }
