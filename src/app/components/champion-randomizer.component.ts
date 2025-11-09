@@ -21,8 +21,6 @@ interface LaneAssignmentView {
 	readonly rolesText: string;
 }
 
-const MAX_ROLL = 5;
-
 @Component({
 	selector: 'app-champion-randomizer',
 	imports: [
@@ -57,8 +55,8 @@ export class ChampionRandomizerComponent {
 	protected readonly isLoading = this.championData.loading;
 	protected readonly loadError = this.championData.error;
 
-	protected readonly reRollBank = signal<number>(MAX_ROLL);
-	protected readonly reRollBankMax = signal<number>(MAX_ROLL);
+	protected readonly reRollBank = signal<number>(0);
+	protected readonly reRollBankMax = signal<number>(0);
 	protected readonly showAndy = signal<boolean>(false);
 
 	protected readonly hasChampions = computed(() => this.champions().length > 0);
@@ -180,7 +178,8 @@ export class ChampionRandomizerComponent {
 	protected rollAssignments(): void {
 		const championsByLaneMap = this.notUsedChampions();
 
-		this.reRollBank.set(MAX_ROLL);
+		this.reRollBank.set(this.activatedLanesArray().length);
+		this.reRollBankMax.set(this.activatedLanesArray().length);
 
 		if (championsByLaneMap.size === 0) {
 			this.assignments.set(this.createEmptyAssignments());
