@@ -3,16 +3,14 @@
 		<mat-card-header class="mat-header">
 			<mat-card-title-group>
 				<mat-card-title>{{ laneLabel() }}</mat-card-title>
-				<mat-card-subtitle>Lane currently disabled</mat-card-subtitle>
+				<mat-card-subtitle>{{ 'lane.disabled_subtitle' | translate }}</mat-card-subtitle>
 			</mat-card-title-group>
 		</mat-card-header>
 		<mat-card-content>
 			<div class="disabled-message">
 				<mat-icon class="disabled-icon" aria-hidden="true">block</mat-icon>
-				<p class="mat-body-large">This lane has been disabled</p>
-				<p class="mat-body-small">
-					You chose to exclude this lane from the random selection.
-				</p>
+				<p class="mat-body-large">{{ 'lane.disabled_title' | translate }}</p>
+				<p class="mat-body-small">{{ 'lane.disabled_detail' | translate }}</p>
 			</div>
 			<button
 				type="button"
@@ -23,7 +21,7 @@
 				(click)="onToggleDisableLane()"
 			>
 				<mat-icon aria-hidden="true">add_circle</mat-icon>
-				Enable Lane
+				{{ 'lane.enable' | translate }}
 			</button>
 		</mat-card-content>
 	</mat-card>
@@ -33,7 +31,7 @@
 			<mat-card-title-group>
 				<mat-card-title>{{ laneLabel() }}</mat-card-title>
 				<mat-card-subtitle>
-					{{ champion() ? 'Unique pick locked in' : 'Champion needed for this lane' }}
+					{{ champion() ? ('lane.locked' | translate) : ('lane.needed' | translate) }}
 				</mat-card-subtitle>
 			</mat-card-title-group>
 			<button
@@ -65,10 +63,10 @@
 				</mat-chip-set>
 			} @else {
 				<p class="champion-name champion-name-empty mat-title-medium">
-					No champion available
+					{{ 'lane.no_champion' | translate }}
 				</p>
 				<p class="champion-roles mat-body-small">
-					Roll again once champions finish loading.
+					{{ 'lane.roll_again_hint' | translate }}
 				</p>
 			}
 			@if (canReRoll()) {
@@ -82,7 +80,7 @@
 					(click)="onChangeChampion(false)"
 				>
 					<mat-icon aria-hidden="true">refresh</mat-icon>
-					Re-Roll !
+					{{ 'lane.reroll' | translate }}
 				</button>
 			} @else {
 				<button
@@ -105,9 +103,9 @@
 						<mat-icon aria-hidden="true">lock_open_right</mat-icon>
 					}
 					@if (!state.isShiftPressed()) {
-						<p>No re-rolls left</p>
+						<p>{{ 'lane.no_rerolls_left' | translate }}</p>
 					} @else {
-						<p>Force Re-Roll!</p>
+						<p>{{ 'lane.force_reroll' | translate }}</p>
 					}
 				</button>
 			}

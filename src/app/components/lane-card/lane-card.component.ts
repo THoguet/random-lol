@@ -4,12 +4,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 import { Lane } from '../../data/champions.data';
 import { RandomizerStateService } from '../../services/randomizer-state.service';
 
 @Component({
 	selector: 'app-lane-card',
-	imports: [NgOptimizedImage, MatButtonModule, MatCardModule, MatChipsModule, MatIconModule],
+	imports: [
+		NgOptimizedImage,
+		MatButtonModule,
+		MatCardModule,
+		MatChipsModule,
+		MatIconModule,
+		TranslateModule,
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './lane-card.component.html',
 	styleUrl: './lane-card.component.css',

@@ -1,7 +1,7 @@
-<h2 mat-dialog-title>Settings</h2>
+<h2 mat-dialog-title>{{ 'settings.title' | translate }}</h2>
 <mat-dialog-content>
 	<div class="setting-item">
-		<label for="fearless-draft-toggle">Fearless Draft</label>
+		<label for="fearless-draft-toggle">{{ 'settings.fearless_draft' | translate }}</label>
 		<!-- Bind directly to the injected data via the change handler so the
          parent is updated immediately when the user toggles the switch. -->
 		<mat-slide-toggle
@@ -10,10 +10,23 @@
 			color="primary"
 			(change)="onToggle($event.checked)"
 		></mat-slide-toggle>
-		<p class="setting-description">
-			When enabled, champions selected in one draft are blacklisted from future rerolls until
-			reset.
-		</p>
+		<p class="setting-description">{{ 'settings.fearless_draft_desc' | translate }}</p>
+	</div>
+	<div class="setting-item">
+		<label for="language-select">{{ 'settings.language' | translate }}</label>
+		<mat-form-field appearance="outline" style="width: 100%; margin-top: 8px">
+			<mat-select
+				id="language-select"
+				[value]="currentLang"
+				(selectionChange)="onLangChange($event.value)"
+			>
+				@for (lang of languages; track lang) {
+					<mat-option [value]="lang">{{
+						'settings.languages.' + lang | translate
+					}}</mat-option>
+				}
+			</mat-select>
+		</mat-form-field>
 	</div>
 </mat-dialog-content>
 

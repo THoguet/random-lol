@@ -10,7 +10,7 @@
 				(click)="onRoll()"
 			>
 				<mat-icon aria-hidden="true">casino</mat-icon>
-				<span>Roll Champions</span>
+				<span>{{ 'control.roll' | translate }}</span>
 			</button>
 			<button
 				type="button"
@@ -21,7 +21,7 @@
 				(click)="onCopyDraft()"
 			>
 				<mat-icon aria-hidden="true">content_copy</mat-icon>
-				<span>Copy Draft</span>
+				<span>{{ 'control.copy' | translate }}</span>
 			</button>
 			@if (state.fearlessDraftEnabled()) {
 				<button
@@ -33,7 +33,7 @@
 					(click)="onReset()"
 				>
 					<mat-icon aria-hidden="true">restart_alt</mat-icon>
-					<span>Reset Blacklist</span>
+					<span>{{ 'control.reset' | translate }}</span>
 				</button>
 			}
 			<button
@@ -44,13 +44,14 @@
 				(click)="openSettings()"
 			>
 				<mat-icon aria-hidden="true">settings</mat-icon>
-				<span>Settings</span>
+				<span>{{ 'control.settings' | translate }}</span>
 			</button>
 		</div>
+
 		<div class="hint mat-body-small">
 			<mat-icon aria-hidden="true" class="iconFlex">info</mat-icon>
 			<span style="height: 24px; display: flex; align-items: center">
-				Each roll keeps champions unique across every lane.
+				{{ 'control.hint' | translate }}
 			</span>
 		</div>
 	</div>
@@ -61,7 +62,7 @@
 	@if (state.isLoading()) {
 		<div class="status mat-body-small" aria-live="polite">
 			<mat-icon aria-hidden="true">autorenew</mat-icon>
-			<span>Loading champion data&hellip;</span>
+			<span>{{ 'control.loading' | translate }}</span>
 		</div>
 	} @else if (state.loadError(); as errorMessage) {
 		<div class="status error mat-body-small" aria-live="polite">
@@ -69,7 +70,7 @@
 			<span>{{ errorMessage }}</span>
 			<button type="button" mat-button color="accent" (click)="onRetry()">
 				<mat-icon aria-hidden="true">refresh</mat-icon>
-				<span>Retry</span>
+				<span>{{ 'control.retry' | translate }}</span>
 			</button>
 		</div>
 	}

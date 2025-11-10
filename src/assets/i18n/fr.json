@@ -1,0 +1,39 @@
+{
+	"app": {
+		"title": "Escouade aléatoire de League",
+		"subtitle": "Attribuez un champion unique pour chaque lane en un clic."
+	},
+	"control": {
+		"roll": "Lancer les champions",
+		"copy": "Copier le draft",
+		"reset": "Réinitialiser la liste noire",
+		"settings": "Paramètres",
+		"hint": "Chaque tir garantit des champions uniques pour chaque lane.",
+		"loading": "Chargement des données des champions…",
+		"retry": "Réessayer"
+	},
+	"lane": {
+		"disabled_subtitle": "Lane actuellement désactivée",
+		"disabled_title": "Cette lane a été désactivée",
+		"disabled_detail": "Vous avez choisi d'exclure cette lane de la sélection aléatoire.",
+		"enable": "Activer la lane",
+		"locked": "Choix unique verrouillé",
+		"needed": "Champion requis pour cette lane",
+		"no_champion": "Aucun champion disponible",
+		"roll_again_hint": "Relancez une fois que les champions ont fini de charger.",
+		"reroll": "Relancer !",
+		"no_rerolls_left": "Plus de relances disponibles",
+		"force_reroll": "Forcer la relance !",
+		"roles_for": "Rôles pour {{name}}"
+	},
+	"settings": {
+		"title": "Paramètres",
+		"fearless_draft": "Draft sans peur",
+		"fearless_draft_desc": "Lorsqu'activé, les champions sélectionnés dans un draft sont mis en liste noire pour les relances futures jusqu'à réinitialisation.",
+		"language": "Langue",
+		"languages": {
+			"en": "English",
+			"fr": "Français"
+		}
+	}
+}

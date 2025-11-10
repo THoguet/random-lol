@@ -1,0 +1,39 @@
+{
+	"app": {
+		"title": "Random League Squad",
+		"subtitle": "Roll a unique champion for every lane in one click."
+	},
+	"control": {
+		"roll": "Roll Champions",
+		"copy": "Copy Draft",
+		"reset": "Reset Blacklist",
+		"settings": "Settings",
+		"hint": "Each roll keeps champions unique across every lane.",
+		"loading": "Loading champion data…",
+		"retry": "Retry"
+	},
+	"lane": {
+		"disabled_subtitle": "Lane currently disabled",
+		"disabled_title": "This lane has been disabled",
+		"disabled_detail": "You chose to exclude this lane from the random selection.",
+		"enable": "Enable Lane",
+		"locked": "Unique pick locked in",
+		"needed": "Champion needed for this lane",
+		"no_champion": "No champion available",
+		"roll_again_hint": "Roll again once champions finish loading.",
+		"reroll": "Re-Roll !",
+		"no_rerolls_left": "No re-rolls left",
+		"force_reroll": "Force Re-Roll!",
+		"roles_for": "Roles for {{name}}"
+	},
+	"settings": {
+		"title": "Settings",
+		"fearless_draft": "Fearless Draft",
+		"fearless_draft_desc": "When enabled, champions selected in one draft are blacklisted from future rerolls until reset.",
+		"language": "Language",
+		"languages": {
+			"en": "English",
+			"fr": "Français"
+		}
+	}
+}
