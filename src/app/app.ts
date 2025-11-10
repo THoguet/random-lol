@@ -31,7 +31,9 @@ export class App {
 		let lang: string | null = null;
 		try {
 			lang = typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : null;
-		} catch {}
+		} catch {
+			// Ignore localStorage errors (e.g., in private browsing mode)
+		}
 		if (!lang && typeof navigator !== 'undefined') {
 			const candidate =
 				(navigator.languages && navigator.languages[0]) || navigator.language || '';
