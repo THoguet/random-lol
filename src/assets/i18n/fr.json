@@ -33,7 +33,8 @@
 		"language": "Langue",
 		"languages": {
 			"en": "English",
-			"fr": "Français"
+			"fr": "Français",
+			"zh": "中文"
 		}
 	}
 }
