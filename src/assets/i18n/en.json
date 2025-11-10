@@ -7,6 +7,7 @@
 		"roll": "Roll Champions",
 		"copy": "Copy Draft",
 		"reset": "Reset Blacklist",
+		"blacklist": "Blacklist",
 		"settings": "Settings",
 		"hint": "Each roll keeps champions unique across every lane.",
 		"loading": "Loading champion data…",
@@ -36,5 +37,10 @@
 			"fr": "Français",
 			"zh": "中文"
 		}
+	},
+	"blacklist": {
+		"title": "Blacklisted Champions",
+		"description": "Champions that have been selected and cannot be rolled again until reset.",
+		"empty": "No champions are currently blacklisted."
 	}
 }

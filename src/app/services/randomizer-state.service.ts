@@ -91,6 +91,21 @@ export class RandomizerStateService {
 		return notUsed;
 	});
 
+	public readonly blacklistedChampionsByLane = computed<Map<Lane, Champion[]>>(() => {
+		const blacklisted = this.blacklistedChampions();
+		const result = new Map<Lane, Champion[]>();
+
+		for (const lane of this.lanes) {
+			const championsForLane =
+				this.championsByLane()
+					.get(lane)
+					?.filter((champion) => blacklisted.has(champion.name)) || [];
+			result.set(lane, championsForLane);
+		}
+
+		return result;
+	});
+
 	public readonly laneAssignments = computed<LaneAssignmentView[]>(() =>
 		this.lanes.map((lane) => {
 			const champion = this.assignments().get(lane) || null;
