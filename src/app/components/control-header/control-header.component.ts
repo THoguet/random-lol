@@ -29,7 +29,9 @@ export class ControlHeaderComponent {
 		this.translate.use(lang);
 		try {
 			localStorage.setItem('lang', lang);
-		} catch {}
+		} catch {
+			// Ignore localStorage errors (e.g., in private browsing mode)
+		}
 	}
 
 	onRoll(): void {
