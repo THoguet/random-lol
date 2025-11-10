@@ -24,15 +24,19 @@ describe('ChampionRandomizerComponent', () => {
 		]);
 
 		// Minimal signal-like stubs used by the component template/computeds
-		(mockStateService as any).isLoading = () => false;
-		(mockStateService as any).hasChampions = () => true;
-		(mockStateService as any).showAndy = () => false;
-		(mockStateService as any).disabledLanes = () => new Set();
-		(mockStateService as any).assignments = () => new Map();
-		(mockStateService as any).laneAssignments = () => [];
-		(mockStateService as any).fearlessDraftEnabled = () => true;
-		(mockStateService as any).reRollBank = () => 0;
-		(mockStateService as any).rerollPercentage = () => 0;
+		Object.assign(mockStateService, {
+			isLoading: () => false,
+			hasChampions: () => true,
+			canCopyDraft: () => false,
+			loadError: () => null,
+			showAndy: () => false,
+			disabledLanes: () => new Set(),
+			assignments: () => new Map(),
+			laneAssignments: () => [],
+			fearlessDraftEnabled: () => true,
+			reRollBank: () => 0,
+			rerollPercentage: () => 0,
+		});
 
 		await TestBed.configureTestingModule({
 			imports: [ChampionRandomizerComponent],

@@ -7,7 +7,7 @@ import { ChampionDataService } from './champion-data.service';
 
 describe('ImagePreloadService', () => {
 	let service: ImagePreloadService;
-	let championDataService: jasmine.SpyObj<ChampionDataService>;
+	let _championDataService: jasmine.SpyObj<ChampionDataService>;
 
 	beforeEach(() => {
 		const championDataSpy = jasmine.createSpyObj('ChampionDataService', ['ensureLoaded'], {
@@ -39,7 +39,7 @@ describe('ImagePreloadService', () => {
 			],
 		});
 
-		championDataService = TestBed.inject(
+		_championDataService = TestBed.inject(
 			ChampionDataService,
 		) as jasmine.SpyObj<ChampionDataService>;
 		service = TestBed.inject(ImagePreloadService);

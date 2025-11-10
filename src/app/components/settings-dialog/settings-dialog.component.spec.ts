@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { SettingsDialogComponent, SettingsDialogData } from './settings-dialog.component';
@@ -21,6 +22,9 @@ describe('SettingsDialogComponent', () => {
 		await TestBed.configureTestingModule({
 			imports: [SettingsDialogComponent],
 			providers: [
+				// Tests run without Zone.js by default in this repo. Provide zoneless
+				// change detection so Angular doesn't try to create a Zone.
+				provideZonelessChangeDetection(),
 				{ provide: MatDialogRef, useValue: mockDialogRef },
 				{ provide: MAT_DIALOG_DATA, useValue: mockDialogData },
 			],

@@ -32,7 +32,11 @@ interface CachedData {
 
 @Injectable({ providedIn: 'root' })
 export class ChampionDataService {
-	private readonly http = inject(HttpClient);
+	// HttpClient can be optional for tests that don't provide HTTP testing
+	// (some tests instantiate services without providing HttpClient). We
+	// inject it as optional and guard uses so tests don't require the
+	// HTTP provider unless they explicitly add it (via provideHttpClientTesting).
+	private readonly http: HttpClient | null = inject(HttpClient, { optional: true });
 
 	private readonly championsSignal = signal<Champion[]>([]);
 	private readonly championsByLaneSignal = signal<Map<Lane, Champion[]>>(new Map());
@@ -55,6 +59,13 @@ export class ChampionDataService {
 
 		// Try to load from cache first
 		if (!force && this.loadFromCache()) {
+			return;
+		}
+
+		// If HttpClient wasn't provided (e.g. in some unit tests), skip
+		// attempting to load from network. Tests that need HTTP should
+		// provide HttpClientTesting.
+		if (!this.http) {
 			return;
 		}
 
@@ -129,6 +140,12 @@ export class ChampionDataService {
 	}
 
 	private async loadChampions(): Promise<void> {
+		// If no HttpClient is available (tests may omit it), bail out.
+		if (!this.http) {
+			this.errorSignal.set('HttpClient not available in this environment');
+			return;
+		}
+
 		this.loadingSignal.set(true);
 		this.errorSignal.set(null);
 

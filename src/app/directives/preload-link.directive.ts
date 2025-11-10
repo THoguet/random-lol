@@ -46,8 +46,9 @@ export class PreloadLinkDirective {
 		this.document.head.appendChild(link);
 	}
 
-	private isHighPriority(url: string): boolean {
+	private isHighPriority(_url: string): boolean {
 		// You can customize this logic based on your needs
+		// Parameter is intentionally unused for now; keep underscore to satisfy lint rules
 		return true;
 	}
 }
