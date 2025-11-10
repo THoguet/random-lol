@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { BlacklistDialogComponent } from './blacklist-dialog.component';
@@ -19,7 +20,10 @@ describe('BlacklistDialogComponent', () => {
 
 		await TestBed.configureTestingModule({
 			imports: [BlacklistDialogComponent, MatDialogModule, TranslateModule.forRoot()],
-			providers: [{ provide: RandomizerStateService, useValue: mockState }],
+			providers: [
+				provideZonelessChangeDetection(),
+				{ provide: RandomizerStateService, useValue: mockState },
+			],
 		}).compileComponents();
 
 		fixture = TestBed.createComponent(BlacklistDialogComponent);
