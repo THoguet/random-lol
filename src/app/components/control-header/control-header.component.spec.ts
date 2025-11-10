@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateModule } from '@ngx-translate/core';
 import { ControlHeaderComponent } from './control-header.component';
 import { RandomizerStateService } from '../../services/randomizer-state.service';
 
@@ -32,7 +33,7 @@ describe('ControlHeaderComponent', () => {
 		});
 
 		await TestBed.configureTestingModule({
-			imports: [ControlHeaderComponent],
+			imports: [ControlHeaderComponent, TranslateModule.forRoot()],
 			providers: [
 				provideZonelessChangeDetection(),
 				{ provide: MatDialog, useValue: mockDialog },

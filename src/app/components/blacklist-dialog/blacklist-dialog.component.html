@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>{{ 'blacklist.title' | translate }}</h2>
+<mat-dialog-content>
+	<p class="description">{{ 'blacklist.description' | translate }}</p>
+	@for (lane of lanes; track lane) {
+		@if (getBlacklistedChampions(lane).length > 0) {
+			<div class="lane-section">
+				<h3 class="lane-title">{{ laneLabel(lane) }}</h3>
+				<div class="champions-grid">
+					@for (champion of getBlacklistedChampions(lane); track champion.name) {
+						<div class="champion-item">
+							<img
+								[ngSrc]="champion.icon"
+								width="48"
+								height="48"
+								[alt]="champion.name"
+								class="champion-icon"
+							/>
+						</div>
+					}
+				</div>
+			</div>
+		}
+	}
+	@if (state.blacklistedChampions().size === 0) {
+		<p class="empty-message">{{ 'blacklist.empty' | translate }}</p>
+	}
+</mat-dialog-content>

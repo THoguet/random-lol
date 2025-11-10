@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SettingsDialogComponent } from '../settings-dialog/settings-dialog.component';
+import { BlacklistDialogComponent } from '../blacklist-dialog/blacklist-dialog.component';
 import { RandomizerStateService } from '../../services/randomizer-state.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -28,7 +29,9 @@ export class ControlHeaderComponent {
 		this.translate.use(lang);
 		try {
 			localStorage.setItem('lang', lang);
-		} catch {}
+		} catch {
+			// Ignore localStorage errors (e.g., in private browsing mode)
+		}
 	}
 
 	onRoll(): void {
@@ -45,6 +48,10 @@ export class ControlHeaderComponent {
 
 	onReset(): void {
 		this.state.resetBlacklist();
+	}
+
+	openBlacklist(): void {
+		this.dialog.open(BlacklistDialogComponent);
 	}
 
 	openSettings(): void {

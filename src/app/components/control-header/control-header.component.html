@@ -36,6 +36,18 @@
 					<span>{{ 'control.reset' | translate }}</span>
 				</button>
 			}
+			@if (state.fearlessDraftEnabled()) {
+				<button
+					type="button"
+					mat-stroked-button
+					color="primary"
+					class="blacklist-button"
+					(click)="openBlacklist()"
+				>
+					<mat-icon aria-hidden="true">block</mat-icon>
+					<span>{{ 'control.blacklist' | translate }}</span>
+				</button>
+			}
 			<button
 				type="button"
 				mat-stroked-button
