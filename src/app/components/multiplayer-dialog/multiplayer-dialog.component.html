@@ -1,0 +1,67 @@
+<div class="multiplayer-dialog">
+	<h2 mat-dialog-title>Online Multiplayer</h2>
+	<mat-dialog-content>
+		<mat-tab-group>
+			<mat-tab label="Create Room">
+				<div class="tab-content">
+					<p>Create a new room and invite your friends to join!</p>
+					<mat-form-field class="full-width">
+						<mat-label>Your Name</mat-label>
+						<input
+							matInput
+							[value]="playerName()"
+							(input)="updatePlayerName($any($event.target).value)"
+							placeholder="Enter your name"
+							[disabled]="isLoading()"
+						/>
+					</mat-form-field>
+					@if (error()) {
+						<div class="error-message">{{ error() }}</div>
+					}
+				</div>
+			</mat-tab>
+			<mat-tab label="Join Room">
+				<div class="tab-content">
+					<p>Join an existing room using the room ID provided by your friend.</p>
+					<mat-form-field class="full-width">
+						<mat-label>Your Name</mat-label>
+						<input
+							matInput
+							[value]="playerName()"
+							(input)="updatePlayerName($any($event.target).value)"
+							placeholder="Enter your name"
+							[disabled]="isLoading()"
+						/>
+					</mat-form-field>
+					<mat-form-field class="full-width">
+						<mat-label>Room ID</mat-label>
+						<input
+							matInput
+							[value]="roomId()"
+							(input)="updateRoomId($any($event.target).value)"
+							placeholder="Enter room ID"
+							[disabled]="isLoading()"
+						/>
+					</mat-form-field>
+					@if (error()) {
+						<div class="error-message">{{ error() }}</div>
+					}
+				</div>
+			</mat-tab>
+		</mat-tab-group>
+	</mat-dialog-content>
+	<mat-dialog-actions>
+		<button mat-button (click)="onCancel()" [disabled]="isLoading()">Cancel</button>
+		<button
+			mat-raised-button
+			color="primary"
+			(click)="onCreateRoom()"
+			[disabled]="isLoading()"
+		>
+			Create Room
+		</button>
+		<button mat-raised-button color="primary" (click)="onJoinRoom()" [disabled]="isLoading()">
+			Join Room
+		</button>
+	</mat-dialog-actions>
+</div>
