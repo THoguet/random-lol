@@ -1,6 +1,33 @@
 <header class="controls">
 	<div class="left-controls">
 		<div class="button-group">
+			@if (!state.isMultiplayerMode()) {
+				<button
+					type="button"
+					mat-raised-button
+					color="primary"
+					class="multiplayer-button"
+					(click)="openMultiplayer()"
+				>
+					<mat-icon aria-hidden="true">group</mat-icon>
+					<span>Multiplayer</span>
+				</button>
+			} @else {
+				<button
+					type="button"
+					mat-raised-button
+					color="warn"
+					class="leave-room-button"
+					(click)="leaveRoom()"
+				>
+					<mat-icon aria-hidden="true">exit_to_app</mat-icon>
+					<span>Leave Room</span>
+				</button>
+				<div class="room-info">
+					<span class="room-label">Room: {{ state.currentRoomId() }}</span>
+					<span class="players-count">{{ state.roomPlayers().length }} player(s)</span>
+				</div>
+			}
 			<button
 				type="button"
 				mat-raised-button

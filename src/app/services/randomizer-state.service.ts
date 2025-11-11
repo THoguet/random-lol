@@ -3,6 +3,7 @@ import { Champion, Lane, LANES } from '../data/champions.data';
 import { ChampionDataService } from './champion-data.service';
 import { RandomNumber } from './random-number';
 import { storedMapSignal, storedSetSignal, storedSignal } from '../shared/utils/stored-signal';
+import { MultiplayerService } from './multiplayer.service';
 
 interface LaneAssignmentView {
 	readonly lane: Lane;
@@ -16,6 +17,7 @@ interface LaneAssignmentView {
 export class RandomizerStateService {
 	private readonly championData = inject(ChampionDataService);
 	private readonly injector = inject(Injector);
+	private readonly multiplayerService = inject(MultiplayerService);
 	private readonly laneTitleMap: Record<Lane, string> = {
 		top: 'Top Lane',
 		jungle: 'Jungle',
@@ -63,6 +65,11 @@ export class RandomizerStateService {
 	public readonly isShiftPressed = signal<boolean>(false);
 	public readonly showAndy = signal<boolean>(false);
 
+	// Multiplayer mode
+	public readonly isMultiplayerMode = computed(() => this.multiplayerService.isMultiplayerMode());
+	public readonly currentRoomId = computed(() => this.multiplayerService.currentRoomId());
+	public readonly roomPlayers = computed(() => this.multiplayerService.roomState()?.players || []);
+
 	// Computed values from champion data service
 	public readonly lanes = LANES;
 	public readonly champions = computed(() => this.championData.champions());
@@ -71,16 +78,32 @@ export class RandomizerStateService {
 	public readonly loadError = computed(() => this.championData.error());
 	public readonly hasChampions = computed(() => this.champions().length > 0);
 
-	// Computed derived state
+	// Computed derived state - use multiplayer state if in multiplayer mode
 	public readonly disabledLanesArray = computed(() => {
+		if (this.isMultiplayerMode()) {
+			return this.multiplayerService.roomState()?.disabledLanes || [];
+		}
 		return Array.from(this.disabledLanes());
 	});
 
 	public readonly activatedLanesArray = computed(() => {
-		return this.lanes.filter((lane) => !this.disabledLanes().has(lane));
+		const disabled = this.isMultiplayerMode()
+			? new Set(this.multiplayerService.roomState()?.disabledLanes || [])
+			: this.disabledLanes();
+		return this.lanes.filter((lane) => !disabled.has(lane));
 	});
 
 	public readonly assignmentsArray = computed(() => {
+		if (this.isMultiplayerMode()) {
+			const roomState = this.multiplayerService.roomState();
+			if (roomState) {
+				const result: (Champion | null)[] = [];
+				for (const lane of this.lanes) {
+					result.push(roomState.assignments[lane] || null);
+				}
+				return result;
+			}
+		}
 		const result: (Champion | null)[] = [];
 		for (const lane of this.lanes) {
 			result.push(this.assignments().get(lane) || null);
@@ -155,10 +178,16 @@ export class RandomizerStateService {
 	});
 
 	public readonly rerollPercentage = computed<number>(() => {
-		if (this.reRollBankMax() === 0) {
+		const bank = this.isMultiplayerMode()
+			? this.multiplayerService.roomState()?.reRollBank || 0
+			: this.reRollBank();
+		const max = this.isMultiplayerMode()
+			? this.multiplayerService.roomState()?.reRollBankMax || 0
+			: this.reRollBankMax();
+		if (max === 0) {
 			return 0;
 		}
-		return (this.reRollBank() / this.reRollBankMax()) * 100;
+		return (bank / max) * 100;
 	});
 
 	constructor() {
@@ -227,7 +256,12 @@ export class RandomizerStateService {
 	}
 
 	// Actions
-	public rollAssignments(): void {
+	public async rollAssignments(): Promise<void> {
+		if (this.isMultiplayerMode()) {
+			await this.multiplayerService.rollAllAssignments();
+			return;
+		}
+
 		this.updateBlacklist();
 		const championsByLaneMap = this.notUsedChampions();
 
@@ -272,7 +306,12 @@ export class RandomizerStateService {
 		return this.laneTitleMap[role];
 	}
 
-	public changeChampion(lane: Lane, forceReroll = false): void {
+	public async changeChampion(lane: Lane, forceReroll = false): Promise<void> {
+		if (this.isMultiplayerMode()) {
+			await this.multiplayerService.rerollLane(lane);
+			return;
+		}
+
 		// Allow reroll if Shift is pressed or if canReRoll is true
 		if (!forceReroll && this.reRollBank() && this.reRollBank() < 1) {
 			return;
@@ -295,7 +334,12 @@ export class RandomizerStateService {
 		});
 	}
 
-	public toggleLane(lane: Lane): void {
+	public async toggleLane(lane: Lane): Promise<void> {
+		if (this.isMultiplayerMode()) {
+			await this.multiplayerService.toggleLane(lane);
+			return;
+		}
+
 		this.disabledLanes.update((current) => {
 			const newSet = new Set(current);
 			if (newSet.has(lane)) {

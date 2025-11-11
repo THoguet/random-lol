@@ -6,12 +6,18 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import { createServer } from 'node:http';
 import { join } from 'node:path';
+import { MultiplayerServer } from './server/multiplayer.server';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
+const httpServer = createServer(app);
 const angularApp = new AngularNodeAppEngine();
+
+// Initialize multiplayer server
+const multiplayerServer = new MultiplayerServer(httpServer);
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -28,16 +34,25 @@ const angularApp = new AngularNodeAppEngine();
 /**
  * Proxy API requests to external CDN to avoid CORS issues
  */
-app.use(
-	'/api/champions',
-	createProxyMiddleware({
-		target: 'https://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/champions.json',
-		changeOrigin: true,
-		pathRewrite: {
-			'^.*': '',
-		},
-	}),
-);
+const championProxy = createProxyMiddleware({
+	target: 'https://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/champions.json',
+	changeOrigin: true,
+	pathRewrite: {
+		'^.*': '',
+	},
+});
+
+app.use('/api/champions', championProxy);
+
+// Fetch champion data for multiplayer server
+fetch('https://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/champions.json')
+	.then((response) => response.json())
+	.then((champions) => {
+		multiplayerServer.setChampionData(champions);
+	})
+	.catch((error) => {
+		console.error('Failed to fetch champion data:', error);
+	});
 
 /**
  * Serve static files from /browser
@@ -66,12 +81,9 @@ app.use((req, res, next) => {
  */
 if (isMainModule(import.meta.url) || process.env['pm_id']) {
 	const port = process.env['PORT'] || 4000;
-	app.listen(port, (error) => {
-		if (error) {
-			throw error;
-		}
-
+	httpServer.listen(port, () => {
 		console.log(`Node Express server listening on http://localhost:${port}`);
+		console.log(`WebSocket server initialized for multiplayer`);
 	});
 }
 

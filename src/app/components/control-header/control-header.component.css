@@ -88,3 +88,22 @@
 	font-size: 2.5rem;
 	font-weight: 600;
 }
+
+.room-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	padding: 0.5rem;
+	background-color: rgba(0, 0, 0, 0.05);
+	border-radius: 4px;
+}
+
+.room-label {
+	font-weight: 600;
+	font-size: 0.875rem;
+}
+
+.players-count {
+	font-size: 0.75rem;
+	opacity: 0.7;
+}
