@@ -1,7 +1,8 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, Injector, signal } from '@angular/core';
 import { Champion, Lane, LANES } from '../data/champions.data';
 import { ChampionDataService } from './champion-data.service';
 import { RandomNumber } from './random-number';
+import { storedMapSignal, storedSetSignal, storedSignal } from '../shared/utils/stored-signal';
 
 interface LaneAssignmentView {
 	readonly lane: Lane;
@@ -14,6 +15,7 @@ interface LaneAssignmentView {
 })
 export class RandomizerStateService {
 	private readonly championData = inject(ChampionDataService);
+	private readonly injector = inject(Injector);
 	private readonly laneTitleMap: Record<Lane, string> = {
 		top: 'Top Lane',
 		jungle: 'Jungle',
@@ -22,17 +24,44 @@ export class RandomizerStateService {
 		support: 'Support',
 	};
 
-	private previousChampionStamp = '';
+	private previousChampionStamp = storedSignal<string>(
+		'randomizer.previousChampionStamp',
+		'',
+		this.injector,
+	);
 
 	// Core state signals
-	public readonly disabledLanes = signal<Set<Lane>>(new Set());
+	public readonly disabledLanes = storedSetSignal<Lane>(
+		'randomizer.disabledLanes',
+		new Set(),
+		this.injector,
+	);
+	public readonly reRollBank = storedSignal<number>('randomizer.reRollBank', 0, this.injector);
+	public readonly reRollBankMax = storedSignal<number>(
+		'randomizer.reRollBankMax',
+		0,
+		this.injector,
+	);
+
+	// Persisted settings using storedSignal
+	public readonly blacklistedChampions = storedSignal<string[]>(
+		'randomizer.blacklistedChampions',
+		[],
+		this.injector,
+	);
+	public readonly fearlessDraftEnabled = storedSignal<boolean>(
+		'randomizer.fearlessDraftEnabled',
+		true,
+		this.injector,
+	);
+	public readonly assignments = storedMapSignal<Lane, Champion | null>(
+		'randomizer.assignments',
+		this.createEmptyAssignments(),
+		this.injector,
+	);
+
 	public readonly isShiftPressed = signal<boolean>(false);
-	public readonly reRollBank = signal<number>(0);
-	public readonly reRollBankMax = signal<number>(0);
 	public readonly showAndy = signal<boolean>(false);
-	public readonly blacklistedChampions = signal<Set<string>>(new Set());
-	public readonly fearlessDraftEnabled = signal<boolean>(true);
-	public readonly assignments = signal<Map<Lane, Champion | null>>(this.createEmptyAssignments());
 
 	// Computed values from champion data service
 	public readonly lanes = LANES;
@@ -83,12 +112,27 @@ export class RandomizerStateService {
 							!this.assignmentsArray().some(
 								(assignedChampion) =>
 									assignedChampion && assignedChampion.name === champion.name,
-							) && !blacklisted.has(champion.name),
+							) && !blacklisted.includes(champion.name),
 					) || [];
 			notUsed.set(lane, champion);
 		}
 
 		return notUsed;
+	});
+
+	public readonly blacklistedChampionsByLane = computed<Map<Lane, Champion[]>>(() => {
+		const blacklisted = this.blacklistedChampions();
+		const result = new Map<Lane, Champion[]>();
+
+		for (const lane of this.lanes) {
+			const championsForLane =
+				this.championsByLane()
+					.get(lane)
+					?.filter((champion) => blacklisted.includes(champion.name)) || [];
+			result.set(lane, championsForLane);
+		}
+
+		return result;
 	});
 
 	public readonly laneAssignments = computed<LaneAssignmentView[]>(() =>
@@ -127,13 +171,17 @@ export class RandomizerStateService {
 			const champions = this.champions();
 			if (champions.length === 0) {
 				this.assignments.set(this.createEmptyAssignments());
-				this.previousChampionStamp = '';
+				this.previousChampionStamp.set('');
 				return;
 			}
 
 			const stamp = champions.map((champion) => champion.id).join('|');
-			if (stamp !== this.previousChampionStamp) {
-				this.previousChampionStamp = stamp;
+			if (stamp !== this.previousChampionStamp()) {
+				this.previousChampionStamp.set(stamp);
+				this.rollAssignments();
+			}
+
+			if (this.assignments().size === 0) {
 				this.rollAssignments();
 			}
 		});
@@ -162,8 +210,25 @@ export class RandomizerStateService {
 		}
 	}
 
+	private updateBlacklist() {
+		// Add selected champions to blacklist for fearless draft (if enabled)
+		if (this.fearlessDraftEnabled()) {
+			this.blacklistedChampions.update((current) => {
+				const updated = [...current];
+				this.assignmentsArray().forEach((championName) => {
+					if (championName === null) return;
+					if (!updated.includes(championName.name)) {
+						updated.push(championName.name);
+					}
+				});
+				return updated;
+			});
+		}
+	}
+
 	// Actions
 	public rollAssignments(): void {
+		this.updateBlacklist();
 		const championsByLaneMap = this.notUsedChampions();
 
 		this.reRollBank.set(this.activatedLanesArray().length);
@@ -193,15 +258,6 @@ export class RandomizerStateService {
 		}
 
 		this.assignments.set(result);
-
-		// Add selected champions to blacklist for fearless draft (if enabled)
-		if (this.fearlessDraftEnabled()) {
-			this.blacklistedChampions.update((current) => {
-				const updated = new Set(current);
-				selected.forEach((championName) => updated.add(championName));
-				return updated;
-			});
-		}
 	}
 
 	public retryLoad(): void {
@@ -232,26 +288,11 @@ export class RandomizerStateService {
 
 		const champion = notUsedChampionsForLane[number];
 
-		// Get the old champion to remove from blacklist if being replaced
-		const oldChampion = this.assignments().get(lane);
-
 		this.assignments.update((current) => {
 			const newState = new Map(current);
 			newState.set(lane, champion);
 			return newState;
 		});
-
-		// Update blacklist only when fearless draft is enabled
-		if (this.fearlessDraftEnabled()) {
-			this.blacklistedChampions.update((current) => {
-				const updated = new Set(current);
-				if (oldChampion) {
-					updated.delete(oldChampion.name);
-				}
-				updated.add(champion.name);
-				return updated;
-			});
-		}
 	}
 
 	public toggleLane(lane: Lane): void {
@@ -299,7 +340,7 @@ export class RandomizerStateService {
 	}
 
 	public resetBlacklist(): void {
-		this.blacklistedChampions.set(new Set());
+		this.blacklistedChampions.set([]);
 	}
 
 	public setFearlessDraftEnabled(value: boolean): void {

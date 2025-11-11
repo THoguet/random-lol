@@ -274,7 +274,7 @@ describe('ChampionDataService', () => {
 
 			const cacheData = {
 				version: 1,
-				timestamp: Date.now() - 25 * 60 * 60 * 1000, // 25 hours ago
+				timestamp: Date.now() - 31 * 24 * 60 * 60 * 1000, // 31 days ago (expired)
 				champions: mockChampions,
 			};
 

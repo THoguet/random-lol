@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { ChampionRandomizerComponent } from './champion-randomizer.component';
 import { RandomizerStateService } from '../services/randomizer-state.service';
 
@@ -39,7 +40,7 @@ describe('ChampionRandomizerComponent', () => {
 		});
 
 		await TestBed.configureTestingModule({
-			imports: [ChampionRandomizerComponent],
+			imports: [ChampionRandomizerComponent, TranslateModule.forRoot()],
 			providers: [
 				provideZonelessChangeDetection(),
 				provideHttpClient(),

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { LaneCardComponent } from './lane-card.component';
 import { RandomizerStateService } from '../../services/randomizer-state.service';
 
@@ -34,7 +35,7 @@ describe('LaneCardComponent', () => {
 		});
 
 		await TestBed.configureTestingModule({
-			imports: [LaneCardComponent],
+			imports: [LaneCardComponent, TranslateModule.forRoot()],
 			providers: [
 				provideZonelessChangeDetection(),
 				{ provide: RandomizerStateService, useValue: mockStateService },

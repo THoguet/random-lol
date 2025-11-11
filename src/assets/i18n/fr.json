@@ -7,6 +7,7 @@
 		"roll": "Lancer les champions",
 		"copy": "Copier le draft",
 		"reset": "Réinitialiser la liste noire",
+		"blacklist": "Liste noire",
 		"settings": "Paramètres",
 		"hint": "Chaque tir garantit des champions uniques pour chaque lane.",
 		"loading": "Chargement des données des champions…",
@@ -33,7 +34,13 @@
 		"language": "Langue",
 		"languages": {
 			"en": "English",
-			"fr": "Français"
+			"fr": "Français",
+			"zh": "中文"
 		}
+	},
+	"blacklist": {
+		"title": "Champions en liste noire",
+		"description": "Champions qui ont été sélectionnés et ne peuvent plus être tirés jusqu'à réinitialisation.",
+		"empty": "Aucun champion n'est actuellement en liste noire."
 	}
 }

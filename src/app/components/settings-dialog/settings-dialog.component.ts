@@ -39,7 +39,7 @@ export class SettingsDialogComponent {
 	private translate = inject(TranslateService);
 
 	// Supported languages; keep in sync with assets/i18n
-	protected readonly languages = ['en', 'fr'];
+	protected readonly languages = ['en', 'fr', 'zh'];
 
 	// Called when the toggle changes — immediately call the provided setter so
 	// the parent receives the change right away (no Save/Cancel required).
@@ -50,14 +50,9 @@ export class SettingsDialogComponent {
 	}
 
 	onLangChange(lang: string): void {
-		// If the parent provided a setter, call it; otherwise change directly
+		// Call the parent-provided setter
 		if (this.data.setLang) {
 			this.data.setLang(lang);
-		} else {
-			this.translate.use(lang);
-			try {
-				localStorage.setItem('lang', lang);
-			} catch {}
 		}
 		// update local copy
 		this.data.currentLang = lang;

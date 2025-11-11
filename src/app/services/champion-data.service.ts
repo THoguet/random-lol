@@ -22,7 +22,7 @@ const POSITION_TO_LANE: Record<RemotePosition, Lane> = {
 
 const CACHE_KEY = 'lol-champions-cache';
 const CACHE_VERSION = 1;
-const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+const CACHE_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 interface CachedData {
 	version: number;

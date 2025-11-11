@@ -1,0 +1,46 @@
+{
+	"app": {
+		"title": "随机英雄阵容",
+		"subtitle": "一键为每条路随机分配唯一英雄。"
+	},
+	"control": {
+		"roll": "随机抽取英雄",
+		"copy": "复制阵容",
+		"reset": "重置黑名单",
+		"blacklist": "黑名单",
+		"settings": "设置",
+		"hint": "每次抽取都会保证每条路的英雄在本次阵容中互不重复。",
+		"loading": "正在加载英雄数据…",
+		"retry": "重试"
+	},
+	"lane": {
+		"disabled_subtitle": "该路目前已禁用",
+		"disabled_title": "此路已被禁用",
+		"disabled_detail": "你选择将此路从随机选择中排除。",
+		"enable": "启用此路",
+		"locked": "唯一选择已锁定",
+		"needed": "此路需要英雄",
+		"no_champion": "没有可用英雄",
+		"roll_again_hint": "请在英雄加载完成后再次抽取。",
+		"reroll": "重新抽取！",
+		"no_rerolls_left": "没有剩余的重新抽取机会",
+		"force_reroll": "强制重新抽取！",
+		"roles_for": "适合 {{name}} 的角色"
+	},
+	"settings": {
+		"title": "设置",
+		"fearless_draft": "无畏选秀",
+		"fearless_draft_desc": "启用后，在一次选秀中被选中的英雄将在重抽之前被列入黑名单，直到你执行重置。",
+		"language": "语言",
+		"languages": {
+			"en": "English",
+			"fr": "Français",
+			"zh": "中文"
+		}
+	},
+	"blacklist": {
+		"title": "黑名单英雄",
+		"description": "已被选中且在重置前无法再次抽取的英雄。",
+		"empty": "当前没有英雄在黑名单中。"
+	}
+}
