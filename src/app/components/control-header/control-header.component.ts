@@ -6,7 +6,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SettingsDialogComponent } from '../settings-dialog/settings-dialog.component';
 import { BlacklistDialogComponent } from '../blacklist-dialog/blacklist-dialog.component';
 import { RandomizerStateService } from '../../services/randomizer-state.service';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../services/language.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
 	selector: 'app-control-header',
@@ -18,21 +19,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 export class ControlHeaderComponent {
 	private readonly dialog = inject(MatDialog);
 	protected readonly state = inject(RandomizerStateService);
-	private readonly translate = inject(TranslateService);
-
-	// Expose current language for UI or binding
-	get currentLang(): string {
-		return this.translate.currentLang || this.translate.getDefaultLang() || 'en';
-	}
-
-	setLang(lang: string): void {
-		this.translate.use(lang);
-		try {
-			localStorage.setItem('lang', lang);
-		} catch {
-			// Ignore localStorage errors (e.g., in private browsing mode)
-		}
-	}
+	private readonly languageService = inject(LanguageService);
 
 	onRoll(): void {
 		this.state.rollAssignments();
@@ -64,8 +51,8 @@ export class ControlHeaderComponent {
 					// Update the service state immediately
 					this.state.setFearlessDraftEnabled(value);
 				},
-				currentLang: this.currentLang,
-				setLang: (lang: string) => this.setLang(lang),
+				currentLang: this.languageService.currentLang(),
+				setLang: (lang: string) => this.languageService.setLanguage(lang),
 			},
 		});
 	}

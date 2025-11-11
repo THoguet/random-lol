@@ -50,16 +50,9 @@ export class SettingsDialogComponent {
 	}
 
 	onLangChange(lang: string): void {
-		// If the parent provided a setter, call it; otherwise change directly
+		// Call the parent-provided setter
 		if (this.data.setLang) {
 			this.data.setLang(lang);
-		} else {
-			this.translate.use(lang);
-			try {
-				localStorage.setItem('lang', lang);
-			} catch {
-				// ignore
-			}
 		}
 		// update local copy
 		this.data.currentLang = lang;
