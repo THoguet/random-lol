@@ -30,6 +30,9 @@ describe('ControlHeaderComponent', () => {
 			reRollBank: () => 0,
 			fearlessDraftEnabled: () => true,
 			loadError: () => null,
+			isMultiplayerMode: () => false,
+			currentRoomId: () => null,
+			roomPlayers: () => [],
 		});
 
 		await TestBed.configureTestingModule({

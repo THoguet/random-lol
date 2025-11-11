@@ -37,6 +37,9 @@ describe('ChampionRandomizerComponent', () => {
 			fearlessDraftEnabled: () => true,
 			reRollBank: () => 0,
 			rerollPercentage: () => 0,
+			isMultiplayerMode: () => false,
+			currentRoomId: () => null,
+			roomPlayers: () => [],
 		});
 
 		await TestBed.configureTestingModule({
