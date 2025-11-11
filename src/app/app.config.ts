@@ -12,9 +12,8 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { imageCacheInterceptor } from './interceptors/image-cache.interceptor';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HttpClient } from '@angular/common/http';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateModule } from '@ngx-translate/core';
 
 export const appConfig: ApplicationConfig = {
 	providers: [
@@ -29,15 +28,10 @@ export const appConfig: ApplicationConfig = {
 		}),
 		// Provide ngx-translate through importProvidersFrom so it is available
 		// for standalone component templates via the translate pipe.
-		importProvidersFrom(
-			TranslateModule.forRoot({
-				loader: {
-					provide: TranslateLoader,
-					useFactory: (http: HttpClient) =>
-						new TranslateHttpLoader(http, '/assets/i18n/', '.json'),
-					deps: [HttpClient],
-				},
-			}),
-		),
+		importProvidersFrom(TranslateModule.forRoot()),
+		provideTranslateHttpLoader({
+			prefix: '/assets/i18n/',
+			suffix: '.json',
+		}),
 	],
 };
