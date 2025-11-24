@@ -51,7 +51,7 @@
 		"@ngx-translate/core": "^17.0.0"
 	},
 	"devDependencies": {
-		"@angular/build": "^20.3.7",
+		"@angular/build": "^21.0.0",
 		"@angular/cli": "^20.3.7",
 		"@angular/compiler-cli": "^20.3.0",
 		"@types/express": "^5.0.1",
