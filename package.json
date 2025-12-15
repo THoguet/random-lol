@@ -39,7 +39,7 @@
 		"@fortawesome/free-brands-svg-icons": "^7.0.0",
 		"@fortawesome/free-regular-svg-icons": "^7.0.0",
 		"@fortawesome/free-solid-svg-icons": "^7.0.0",
-		"eslint": "^9.39.1",
+		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.4",
 		"express": "^5.1.0",
