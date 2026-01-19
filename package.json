@@ -55,7 +55,7 @@
 		"@angular/cli": "^20.3.7",
 		"@angular/compiler-cli": "^20.3.0",
 		"@types/express": "^5.0.1",
-		"@types/jasmine": "~5.1.0",
+		"@types/jasmine": "~5.1.15",
 		"@types/node": "^24.10.0",
 		"jasmine-core": "~5.12.1",
 		"karma": "~6.4.0",
